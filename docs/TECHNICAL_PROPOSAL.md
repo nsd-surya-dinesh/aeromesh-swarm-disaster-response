@@ -1,7 +1,7 @@
 # AeroMesh-Swarm: Resilient Multi-Hop UAV Swarm for Post-Disaster Reconnaissance and Aerial Mesh Communication
 ## Technical Proposal for Stage 1: Preliminary Design Verification
 
-**Team / Author:** Surya & AeroMesh Development Team  
+**Team / Author:** Naga Surya Dinesh & AeroMesh Development Team  
 **Affiliation:** Autonomous Robotics & Swarm Intelligence Laboratory  
 **Challenge Track:** Multi-UAV Autonomous Disaster Response & Aerial Mesh Networking  
 **Date:** September 2026  

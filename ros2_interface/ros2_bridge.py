@@ -128,7 +128,7 @@ def generate_ros2_package_xml():
   <name>aeromesh_swarm</name>
   <version>1.0.0</version>
   <description>AeroMesh-Swarm: Communication-Aware UAV Swarm for Disaster Response</description>
-  <maintainer email="surya@aeromesh.dev">Surya</maintainer>
+  <maintainer email="nagasuryadinesh@gmail.com">Naga Surya Dinesh</maintainer>
   <license>MIT</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>

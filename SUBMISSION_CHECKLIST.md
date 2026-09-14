@@ -1,7 +1,7 @@
 # AeroMesh-Swarm Stage 1 Submission Checklist
 
 **Project:** AeroMesh-Swarm: Resilient Multi-Hop UAV Swarm for Disaster Reconnaissance  
-**Team Lead:** Surya  
+**Team Lead:** Naga Surya Dinesh  
 **Submission Status:** Ready for final verification and GitHub upload
 
 ---

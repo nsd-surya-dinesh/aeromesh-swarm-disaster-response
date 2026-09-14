@@ -311,7 +311,7 @@ If you use **AeroMesh-Swarm** in your research or project, please cite:
 
 ```bibtex
 @software{aeromesh_swarm_2026,
-  author = {Surya Nagarajan and AeroMesh Development Team},
+  author = {Naga Surya Dinesh and AeroMesh Development Team},
   title = {AeroMesh-Swarm: Resilient Multi-Hop UAV Swarm for Disaster Response},
   year = {2026},
   month = {September},
@@ -334,7 +334,7 @@ If you use **AeroMesh-Swarm** in your research or project, please cite:
 ## 📞 Contact & Support
 
 ### For Judges & Evaluators
-- **Primary Contact**: surya@aeromesh-swarm.dev
+- **Primary Contact**: nagasuryadinesh@gmail.com
 - **Technical Questions**: Open an [issue](https://github.com/YOUR_USERNAME/aeromesh-swarm-disaster-response/issues)
 - **Quick Demo**: `python run_simulation.py --benchmark-all`
 

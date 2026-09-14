@@ -3,7 +3,7 @@
 
 **Evaluation Time Estimate:** 30-40 minutes  
 **Last Updated:** September 14, 2026  
-**Team:** Surya & AeroMesh Development Team
+**Team:** Naga Surya Dinesh & AeroMesh Development Team
 
 ---
 
@@ -529,7 +529,7 @@ python run_simulation.py --benchmark-all
 
 ### 6.1 Primary Contact
 
-**Team Lead:** Surya  
+**Team Lead:** Naga Surya Dinesh  
 **Project:** AeroMesh-Swarm  
 **Submission Date:** September 14, 2026
 
