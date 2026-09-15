@@ -4,7 +4,7 @@
 
 [![Tests](https://img.shields.io/badge/tests-19%2F19%20passing-brightgreen)](tests/)
 [![Python](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org/)
-[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
 [![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)]()
 [![PDR](https://img.shields.io/badge/PDR-100%25-brightgreen)]()
 [![Competition](https://img.shields.io/badge/stage-1%20verified-success)]()
