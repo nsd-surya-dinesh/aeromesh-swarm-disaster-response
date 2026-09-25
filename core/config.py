@@ -32,7 +32,7 @@ class UAVConfig:
     max_acceleration: float = 3.0  # m/s^2
 
     # Battery and energy
-    battery_capacity: float = 5000.0  # Wh (Watt-hours)
+    battery_capacity: float = 200.0  # Wh (Watt-hours) - Realistic for 2.5kg UAV
     hover_power: float = 150.0  # Watts
     cruise_power: float = 200.0  # Watts
     max_power: float = 350.0  # Watts

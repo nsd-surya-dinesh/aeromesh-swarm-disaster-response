@@ -55,8 +55,11 @@ class PathPlanner:
         avoidance_offset = self.compute_collision_avoidance_vector(uav)
         adjusted_target = target + avoidance_offset
 
-        # Maintain safe survey altitude
-        adjusted_target.z = max(30.0, adjusted_target.z)
+        # Hard Geofence Clamping (Stage 1 Safety Requirement)
+        # Boundary: 2000m x 2000m x 120m
+        adjusted_target.x = max(0.0, min(2000.0, adjusted_target.x))
+        adjusted_target.y = max(0.0, min(2000.0, adjusted_target.y))
+        adjusted_target.z = max(30.0, min(120.0, adjusted_target.z))
 
         return adjusted_target
 
