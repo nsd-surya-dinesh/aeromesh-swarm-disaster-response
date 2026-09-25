@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AeroMesh-Swarm: Stage 1 Presentation | Pushpak Grand Challenge 2026</title>
+  <style>
+    :root {
+      --bg-dark: #0B192C;
+      --bg-card-dark: #142640;
+      --bg-light: #F5F7FA;
+      --card-bg: #FFFFFF;
+      --primary: #1E3E62;
+      --accent: #FF6500;
+      --accent-blue: #00A8E8;
+      --text-dark: #212529;
+      --text-light: #F0F4F8;
+      --text-muted: #6C757D;
+      --green: #28A745;
+      --border: #DCE2EB;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: #050d18;
+      color: var(--text-dark);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .presentation-container {
+      width: 1200px;
+      height: 675px; /* 16:9 ratio */
+      position: relative;
+      background: var(--bg-light);
+      border-radius: 12px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      overflow: hidden;
+    }
+
+    .slide {
+      display: none;
+      width: 100%;
+      height: 100%;
+      padding: 40px 60px;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .slide.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .slide.dark-theme {
+      background: var(--bg-dark);
+      color: var(--text-light);
+    }
+
+    /* Kicker & Title */
+    .kicker {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .slide-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 24px;
+    }
+
+    .dark-theme .slide-title {
+      color: #FFFFFF;
+    }
+
+    /* Cards & Layout Grid */
+    .grid-2x2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-gap: 18px;
+      flex: 1;
+    }
+
+    .grid-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-gap: 24px;
+      flex: 1;
+    }
+
+    .grid-3col {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-gap: 18px;
+      flex: 1;
+    }
+
+    .grid-4col {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-gap: 16px;
+      flex: 1;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-dark {
+      background: var(--bg-card-dark);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+
+    .card-dark .card-title {
+      color: #FFFFFF;
+    }
+
+    .card-subtitle {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    .card-text {
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: var(--text-dark);
+    }
+
+    .card-dark .card-text {
+      color: var(--text-light);
+    }
+
+    ul.card-list {
+      list-style-type: none;
+      padding-left: 0;
+    }
+
+    ul.card-list li {
+      font-size: 12px;
+      line-height: 1.45;
+      margin-bottom: 6px;
+      position: relative;
+      padding-left: 14px;
+    }
+
+    ul.card-list li::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    /* Title Slide Specifics */
+    .title-wrapper {
+      display: flex;
+      height: 100%;
+      align-items: center;
+    }
+
+    .title-accent-bar {
+      width: 6px;
+      height: 70%;
+      background: var(--accent);
+      border-radius: 3px;
+      margin-right: 32px;
+    }
+
+    .title-content {
+      flex: 1;
+    }
+
+    .title-main {
+      font-size: 42px;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin-bottom: 10px;
+    }
+
+    .title-sub {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--accent-blue);
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .title-desc {
+      font-size: 14px;
+      color: var(--text-light);
+      margin-bottom: 24px;
+    }
+
+    /* Benchmark Table */
+    table.bench-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      background: white;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    table.bench-table th {
+      background: var(--primary);
+      color: white;
+      padding: 10px 12px;
+      text-align: left;
+      font-weight: 600;
+    }
+
+    table.bench-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    table.bench-table tr:nth-child(even) td {
+      background: #F8FAFC;
+    }
+
+    .val-pass {
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    /* Controls Bar */
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 1200px;
+      margin-top: 15px;
+      color: #8A99AD;
+      font-size: 13px;
+    }
+
+    .btn-nav {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-nav:hover {
+      background: var(--accent);
+    }
+
+    .code-block {
+      background: #0E1A2B;
+      color: #64D2FF;
+      font-family: "Consolas", monospace;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      margin: 4px 0;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="presentation-container">
+
+    <!-- SLIDE 1: TITLE SLIDE -->
+    <div class="slide dark-theme active" id="slide-1">
+      <div class="title-wrapper">
+        <div class="title-accent-bar"></div>
+        <div class="title-content">
+          <div class="kicker">PUSHPAK GRAND CHALLENGE 2026 | TECHFEST, IIT BOMBAY</div>
+          <h1 class="title-main">AeroMesh-Swarm</h1>
+          <div class="title-sub">Resilient Multi-Hop UAV Swarm for Autonomous BVLOS Disaster Reconnaissance & Aerial Mesh Communication</div>
+          <div class="title-desc">Stage 1: Preliminary Design Verification & Complete Simulation Proof-of-Concept</div>
+
+          <div class="card-dark" style="margin-top: 20px; border-color: #284668;">
+            <div style="font-size: 13px; font-weight: 700; color: #FFF; margin-bottom: 4px;">
+              Author / Team: Naga Surya Dinesh (Lead) & AeroMesh Development Team
+            </div>
+            <div style="font-size: 12px; color: var(--accent-blue); margin-bottom: 4px;">
+              GitHub: github.com/nsd-surya-dinesh/aeromesh-swarm-disaster-response &nbsp;|&nbsp; Tag: v1.0.0-stage1
+            </div>
+            <div style="font-size: 12px; color: var(--text-light);">
+              Submission Target: pushpak_gc2026@aero.iitb.ac.in &nbsp;|&nbsp; 19/19 Unit & Integration Tests Passed (100%)
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: DELIVERABLES COMPLIANCE -->
+    <div class="slide" id="slide-2">
+      <div class="kicker">STAGE 1 COMPLIANCE</div>
+      <h2 class="slide-title">Official Deliverables Mapping & Verification</h2>
+      <div class="grid-2x2">
+        <div class="card">
+          <div class="card-title">1. 6–8 Page Technical Proposal</div>
+          <div class="card-subtitle">docs/TECHNICAL_PROPOSAL.md</div>
+          <div class="card-text">Comprehensive mathematical formulations (ITU-R LoS, Shannon capacity, kinematics), 4-tier modular architecture, and empirical benchmark analysis.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">2. Software Architecture</div>
+          <div class="card-subtitle">docs/TECHNICAL_PROPOSAL.md, README.md</div>
+          <div class="card-text">Complete 4-tier modular architecture + ROS 2 Humble bridge layer with standard topics, services, and MAVROS SITL interface.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">3. Proof-of-Concept Simulation</div>
+          <div class="card-subtitle">run_simulation.py</div>
+          <div class="card-text">Discrete-event 3D simulator verifying 4 challenging disaster scenarios with 100% PoI coverage, 100% PDR, and zero crashes.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">4. Complete Source Code</div>
+          <div class="card-subtitle">core/, comm/, swarm/, simulation/</div>
+          <div class="card-text">26 cleanly separated modules (~2,450 lines of Python), type hints, unit & integration tests, fully documented and published on GitHub.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">5. Installation & Setup Guides</div>
+          <div class="card-subtitle">docs/INSTALLATION.md, JUDGE_SETUP_GUIDE.md</div>
+          <div class="card-text">Single-command installation workflow with 5-minute quickstart guide for competition judges and evaluators.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">6. Demonstration Video / Media</div>
+          <div class="card-subtitle">scenario_3_demo.gif, scenario_3_snapshots/</div>
+          <div class="card-text">High-resolution visual demo showcasing real-time survivor preemption and sub-2.1s self-healing recovery.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: PROBLEM FORMULATION -->
+    <div class="slide" id="slide-3">
+      <div class="kicker">OPERATIONAL CONTEXT</div>
+      <h2 class="slide-title">Problem Formulation & Post-Disaster Challenges</h2>
+      <div class="grid-2col">
+        <div class="card">
+          <div class="card-title" style="color: var(--accent);">Post-Disaster Constraints</div>
+          <ul class="card-list" style="margin-top: 10px;">
+            <li><strong>Severed Communications:</strong> Earthquake/landslide eliminates terrestrial cellular backhaul; GCS positioned outside hazard zone.</li>
+            <li><strong>BVLOS Terrain Blockage:</strong> Dispersed PoIs in rugged 2km x 2km zone with deep mountain ridges causing severe RF Non-Line-of-Sight (NLoS).</li>
+            <li><strong>Battery Limitations:</strong> Multicopters have strictly bounded flight endurance; hover at relay points drains 18% more energy than cruising.</li>
+            <li><strong>Dynamic Emergencies:</strong> Sudden survivor discoveries, RF jamming, or hardware failure demand instant swarm re-coordination.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title" style="color: var(--primary);">AeroMesh-Swarm Innovations</div>
+          <ul class="card-list" style="margin-top: 10px;">
+            <li><strong>Decentralized CBBA Auctioning:</strong> Conflict-free task allocation balancing PoI urgency, detour distance, and battery State-of-Charge.</li>
+            <li><strong>Steiner-Point Relay Deployment:</strong> Dynamic placement of relay UAVs at geometric Steiner midpoints governed by Artificial Potential Fields (APF).</li>
+            <li><strong>ETX Multi-Hop Mesh Routing:</strong> Dynamic Dijkstra routing minimizing Expected Transmission Count (ETX) and packet delivery latency.</li>
+            <li><strong>Sub-2.1s Autonomous Self-Healing:</strong> Heartbeat fail-safes detect node failures and instantly promote standby UAVs to restore severed links.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: MATHEMATICAL MODELING -->
+    <div class="slide" id="slide-4">
+      <div class="kicker">PHYSICAL FOUNDATIONS</div>
+      <h2 class="slide-title">Mathematical System Modeling</h2>
+      <div class="grid-3col">
+        <div class="card">
+          <div class="card-title">1. ITU-R P.1411 RF Model</div>
+          <div class="card-text">
+            Elevation angle θ determines probabilistic Line-of-Sight:
+            <div class="code-block">P(LoS) = 1 / [1 + a*exp(-b(θ-a))]</div>
+            Path loss with log-normal shadow fading:
+            <div class="code-block">PL(d) = 20log10(4πfc*d/c) + η + X_σ</div>
+            SNR threshold for relay placement:
+            <div class="code-block">SNR >= 10 dB</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">2. Shannon Capacity & ETX</div>
+          <div class="card-text">
+            Theoretical link bandwidth modeled dynamically:
+            <div class="code-block">C_ij = B * log2(1 + 10^(SNR/10))</div>
+            Link routing cost via Expected Transmission Count:
+            <div class="code-block">ETX_ij = 1 / (d_f * d_r) ~= 1/PDR</div>
+            Dynamic Dijkstra computes minimum-ETX multi-hop routes.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">3. Rotorcraft Aerodynamics</div>
+          <div class="card-text">
+            Power combines hover, profile, and parasite drag:
+            <div class="code-block">P(t) = P_hov*[c1+c2(v/v0)^2+c3(v/v0)^3] + P_sens + P_rf</div>
+            Dynamic Return-to-Base (RTB) energy boundary:
+            <div class="code-block">E_safe = [P_cr*(||p-p_gcs||/v)/3600] + E_res</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: SOFTWARE ARCHITECTURE -->
+    <div class="slide" id="slide-5">
+      <div class="kicker">SYSTEM DESIGN</div>
+      <h2 class="slide-title">4-Tier Modular Software Architecture</h2>
+      <div style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
+        <div class="card" style="padding: 12px 18px; border-left: 4px solid var(--accent);">
+          <div style="display: flex; justify-content: space-between;">
+            <strong style="color: var(--accent); font-size: 13px;">Tier 1: Visualization & GCS Layer</strong>
+            <span style="font-size: 11px; color: var(--text-muted);">60 FPS Pygame GUI | FastAPI Web Dashboard | Dynamic Event Console | Demo Video Exporter</span>
+          </div>
+        </div>
+        <div class="card" style="padding: 12px 18px; border-left: 4px solid var(--primary);">
+          <div style="display: flex; justify-content: space-between;">
+            <strong style="color: var(--primary); font-size: 13px;">Tier 2: Swarm Autonomy & Decision Layer</strong>
+            <span style="font-size: 11px; color: var(--text-muted);">CBBA Task Allocator | APF / Dubins 3D Path Planner | Health Monitor (<2.1s Healing) | RTB Handoff</span>
+          </div>
+        </div>
+        <div class="card" style="padding: 12px 18px; border-left: 4px solid var(--accent-blue);">
+          <div style="display: flex; justify-content: space-between;">
+            <strong style="color: var(--accent-blue); font-size: 13px;">Tier 3: Aerial Mesh & Relay Network Layer</strong>
+            <span style="font-size: 11px; color: var(--text-muted);">ETX-Weighted Dijkstra Router | Steiner Tree & APF Relaying | Packet Queue Manager | ITU-R RF Channel</span>
+          </div>
+        </div>
+        <div class="card" style="padding: 12px 18px; border-left: 4px solid var(--green);">
+          <div style="display: flex; justify-content: space-between;">
+            <strong style="color: var(--green); font-size: 13px;">Tier 4: Environment & Kinodynamics Layer</strong>
+            <span style="font-size: 11px; color: var(--text-muted);">3D Kinematic Flight Physics | Rotorcraft Power Model | GCS Fast-Charging Station | 0.1s Synchronizer</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: CBBA & SELF-HEALING -->
+    <div class="slide" id="slide-6">
+      <div class="kicker">SWARM INTELLIGENCE</div>
+      <h2 class="slide-title">CBBA Task Allocation & Autonomous Self-Healing</h2>
+      <div class="grid-2col">
+        <div class="card">
+          <div class="card-title">1. CBBA Marginal Utility Scoring</div>
+          <div class="card-text">
+            Decentralized bundle bidding without a single master:
+            <div class="code-block">S_ij = w_j * γ^(T_arr/60) - α*(Δd/1000) - β*(ΔE/E_cap)</div>
+            <ul class="card-list" style="margin-top: 10px;">
+              <li><strong>Conflict-Free Convergence:</strong> Max-bid consensus over the mesh.</li>
+              <li><strong>Battery-Constrained:</strong> Rejects tasks exceeding safe RTB reserve.</li>
+              <li><strong>Emergency Preemption:</strong> Survivor discoveries (Priority 8.0) immediately preempt lower-priority survey paths.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">2. Sub-2.1s Autonomous Self-Healing</div>
+          <div class="card-text">
+            Automated replacement scoring for relay failures:
+            <div class="code-block">Score(u) = 0.4/||p_u - p_rel|| + 0.3*SoC + 0.3*I(STANDBY)</div>
+            <ul class="card-list" style="margin-top: 10px;">
+              <li><strong>Heartbeat Monitoring:</strong> Detects node crash in &lt; 3.0s.</li>
+              <li><strong>Candidate Promotion:</strong> Dispatches best standby/scout UAV to relay point.</li>
+              <li><strong>Zero Packet Drop:</strong> ETX routing updates routes seamlessly (100% PDR preserved).</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7: SCENARIOS -->
+    <div class="slide" id="slide-7">
+      <div class="kicker">EXPERIMENTATION</div>
+      <h2 class="slide-title">4 Benchmark Simulation Scenarios</h2>
+      <div class="grid-2x2">
+        <div class="card">
+          <div class="card-title">Scenario 1: Baseline Survey</div>
+          <div class="card-subtitle">5 UAVs | 10 PoIs | Open Terrain</div>
+          <div class="card-text">Standard multi-UAV reconnaissance validating conflict-free CBBA task allocation and single-hop telemetry. (100% coverage, 289s duration)</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Scenario 2: Deep Canyon Obstacle</div>
+          <div class="card-subtitle">6 UAVs | 8 Distant PoIs | Severe NLoS</div>
+          <div class="card-text">Mountain ridge blocking direct LoS; autonomous deployment of 3-hop Steiner relay chain maintaining 100% PDR (282ms latency).</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Scenario 3: Dynamic Fault & Emergency</div>
+          <div class="card-subtitle">6 UAVs | 8 PoIs | Crash + Survivor Alert</div>
+          <div class="card-text">Mid-mission survivor alert + sudden Relay-1 crash at t=180s. Autonomous self-healing restores bridge in 2.1s. (229s duration)</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Scenario 4: Endurance & Battery Cycling</div>
+          <div class="card-subtitle">8 UAVs | 16 Dispersed PoIs | Multi-Cycle</div>
+          <div class="card-text">Extended mission with automated battery swapping; UAVs cycle through GCS charging pads with zero mission interruption. (351s duration)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8: BENCHMARK RESULTS -->
+    <div class="slide" id="slide-8">
+      <div class="kicker">PERFORMANCE EVALUATION</div>
+      <h2 class="slide-title">Empirical Benchmark Verification Matrix</h2>
+      <div class="grid-2col" style="grid-template-columns: 1.5fr 1fr;">
+        <div>
+          <table class="bench-table">
+            <thead>
+              <tr>
+                <th>Performance Metric</th>
+                <th>S1: Base</th>
+                <th>S2: Canyon</th>
+                <th>S3: Fault</th>
+                <th>S4: Endur</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>PoI Coverage (%)</td><td class="val-pass">100.0%</td><td class="val-pass">100.0%</td><td class="val-pass">100.0%</td><td class="val-pass">100.0%</td></tr>
+              <tr><td>Packet Delivery Ratio</td><td class="val-pass">100.0%</td><td class="val-pass">100.0%</td><td class="val-pass">100.0%</td><td class="val-pass">100.0%</td></tr>
+              <tr><td>Avg E2E Latency (ms)</td><td>101.7 ms</td><td>282.2 ms</td><td>123.0 ms</td><td>114.4 ms</td></tr>
+              <tr><td>PoIs Surveyed</td><td>10 / 10</td><td>8 / 8</td><td>8 / 8</td><td>16 / 16</td></tr>
+              <tr><td>Mission Duration (s)</td><td>289.0 s</td><td>256.0 s</td><td>229.9 s</td><td>351.9 s</td></tr>
+              <tr><td>Energy Consumed (kWh)</td><td>0.12 kWh</td><td>0.14 kWh</td><td>0.11 kWh</td><td>0.18 kWh</td></tr>
+              <tr><td>Swarm Survival Rate</td><td class="val-pass">100.0%</td><td class="val-pass">100.0%</td><td class="val-pass">100.0%</td><td class="val-pass">100.0%</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-title" style="color: var(--accent);">Key Empirical Takeaways</div>
+          <ul class="card-list" style="margin-top: 8px;">
+            <li><strong>100% Mission Completion:</strong> All 42 PoIs across 4 scenarios surveyed.</li>
+            <li><strong>Zero Packet Drops:</strong> ETX routing ensured 100% PDR even across 3 hops.</li>
+            <li><strong>Rapid Self-Healing:</strong> Relay failures recovered in under 2.1 seconds.</li>
+            <li><strong>Zero Battery Crashes:</strong> Dynamic RTB boundaries safely preserved all UAVs.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9: ROS 2 & ROADMAP -->
+    <div class="slide" id="slide-9">
+      <div class="kicker">STAGE 2 TRANSITION</div>
+      <h2 class="slide-title">ROS 2 Humble Architecture & Hardware Roadmap</h2>
+      <div class="grid-2col">
+        <div class="card">
+          <div class="card-title">ROS 2 Humble Bridge Layer</div>
+          <div class="card-text">
+            Package: <code style="color: var(--accent);">aeromesh_swarm</code>
+            <ul class="card-list" style="margin-top: 8px;">
+              <li><code>/aeromesh/uav_{id}/pose</code> (PoseStamped)</li>
+              <li><code>/aeromesh/uav_{id}/battery_state</code> (BatteryState)</li>
+              <li><code>/aeromesh/network/topology</code> (MeshTopology)</li>
+              <li><code>/aeromesh/task/allocate</code> (AllocateTasks srv)</li>
+              <li><code>/aeromesh/mission/inject_poi</code> (InjectEmergency srv)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Stage 2 Hardware-in-the-Loop Roadmap</div>
+          <ul class="card-list" style="margin-top: 8px;">
+            <li><strong>PX4 SITL & Gazebo Garden:</strong> Full 3D simulation with MAVROS companion computer interface.</li>
+            <li><strong>Companion Computers:</strong> Raspberry Pi 4 / NVIDIA Jetson Orin Nano running ROS 2 DDS.</li>
+            <li><strong>Wireless Mesh:</strong> 802.11s mesh hardware + long-range LoRa / ESP-NOW telemetry backup.</li>
+            <li><strong>Field Trials:</strong> Target tagging via onboard YOLOv8-nano models.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10: QUICKSTART FOR JUDGES -->
+    <div class="slide" id="slide-10">
+      <div class="kicker">EVALUATOR QUICKSTART</div>
+      <h2 class="slide-title">5-Minute Verification Workflow for Judges</h2>
+      <div class="grid-2x2">
+        <div class="card">
+          <div class="card-title">1. Setup Environment (1 min)</div>
+          <div class="code-block">$ pip install -r requirements.txt</div>
+          <div class="card-text">Zero heavy proprietary dependencies. Compatible with Linux, macOS, and Windows 10/11.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">2. Run Test Suite (30 sec)</div>
+          <div class="code-block">$ python -m pytest tests/ -v</div>
+          <div class="card-text">Executes all 19 unit & integration tests covering RF channel, CBBA, and scenarios. (100% Pass)</div>
+        </div>
+        <div class="card">
+          <div class="card-title">3. Run Benchmarks (3 min)</div>
+          <div class="code-block">$ python run_simulation.py --benchmark-all</div>
+          <div class="card-text">Executes all 4 disaster scenarios in 10x real-time and prints full performance comparison matrix.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">4. Verify ROS 2 Bridge</div>
+          <div class="code-block">$ python ros2_interface/ros2_bridge.py</div>
+          <div class="card-text">Validates ROS 2 Humble node interface compliance and topic/service mappings for Stage 2.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 11: CONCLUSION -->
+    <div class="slide dark-theme" id="slide-11">
+      <div class="kicker">STAGE 1 CONCLUSION</div>
+      <h2 class="slide-title" style="color: #FFF;">AeroMesh-Swarm: Stage 1 Verification Summary</h2>
+
+      <div class="grid-4col" style="margin-bottom: 20px;">
+        <div class="card-dark" style="text-align: center; border-color: var(--accent);">
+          <div style="font-size: 32px; font-weight: 800; color: var(--accent);">100%</div>
+          <div style="font-size: 12px; font-weight: 700; color: #FFF; margin: 4px 0;">Coverage</div>
+          <div style="font-size: 10px; color: var(--text-light);">42/42 total PoIs surveyed across all 4 scenarios.</div>
+        </div>
+        <div class="card-dark" style="text-align: center; border-color: var(--accent-blue);">
+          <div style="font-size: 32px; font-weight: 800; color: var(--accent-blue);">100%</div>
+          <div style="font-size: 12px; font-weight: 700; color: #FFF; margin: 4px 0;">PDR</div>
+          <div style="font-size: 10px; color: var(--text-light);">Zero packet loss over dynamic ETX mesh links.</div>
+        </div>
+        <div class="card-dark" style="text-align: center; border-color: var(--green);">
+          <div style="font-size: 32px; font-weight: 800; color: var(--green);">&lt; 2.1s</div>
+          <div style="font-size: 12px; font-weight: 700; color: #FFF; margin: 4px 0;">Self-Healing</div>
+          <div style="font-size: 10px; color: var(--text-light);">Autonomous relay failure detection & promotion.</div>
+        </div>
+        <div class="card-dark" style="text-align: center; border-color: #FFC107;">
+          <div style="font-size: 32px; font-weight: 800; color: #FFC107;">100%</div>
+          <div style="font-size: 12px; font-weight: 700; color: #FFF; margin: 4px 0;">Survival</div>
+          <div style="font-size: 10px; color: var(--text-light);">Zero battery exhaustion crashes via dynamic RTB.</div>
+        </div>
+      </div>
+
+      <div class="card-dark" style="border-color: var(--primary);">
+        <div style="font-size: 15px; font-weight: 700; color: #FFF; margin-bottom: 6px;">Thank You! — Ready for Stage 1 Evaluation & Stage 2 Transition</div>
+        <div style="font-size: 11.5px; color: var(--text-light); line-height: 1.6;">
+          <strong>Team Lead:</strong> Naga Surya Dinesh &nbsp;|&nbsp; <strong>Email:</strong> nagasuryadinesh@gmail.com<br>
+          <strong>Repository:</strong> https://github.com/nsd-surya-dinesh/aeromesh-swarm-disaster-response<br>
+          <strong>Challenge:</strong> Pushpak Grand Challenge 2026 (Techfest, IIT Bombay) &nbsp;|&nbsp; <strong>Submission:</strong> pushpak_gc2026@aero.iitb.ac.in
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Navigation Controls -->
+  <div class="controls">
+    <button class="btn-nav" onclick="prevSlide()">❮ Previous</button>
+    <span id="slide-counter">Slide 1 of 11</span>
+    <button class="btn-nav" onclick="nextSlide()">Next ❯</button>
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 11;
+
+    function showSlide(n) {
+      document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+      const target = document.getElementById(`slide-${n}`);
+      if (target) {
+        target.classList.add('active');
+        currentSlide = n;
+        document.getElementById('slide-counter').textContent = `Slide ${currentSlide} of ${totalSlides}`;
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) showSlide(currentSlide + 1);
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) showSlide(currentSlide - 1);
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+      if (e.key === 'ArrowLeft') prevSlide();
+    });
+  </script>
+</body>
+</html>
