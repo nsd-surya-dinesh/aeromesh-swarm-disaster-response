@@ -57,11 +57,11 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 
 ## 3. Connect to GitHub Remote and Push
 
-Replace `YOUR_USERNAME` with your actual GitHub username:
+Your GitHub username is set to `nsd-surya-dinesh`:
 
 ```bash
 # Add GitHub remote (HTTPS - recommended for Windows)
-git remote add origin https://github.com/YOUR_USERNAME/aeromesh-swarm-disaster-response.git
+git remote add origin https://github.com/nsd-surya-dinesh/aeromesh-swarm-disaster-response.git
 
 # Verify remote is set correctly
 git remote -v
@@ -91,7 +91,7 @@ git push -u origin main
 **Alternative - SSH**:
 ```bash
 # Add SSH remote instead
-git remote add origin git@github.com:YOUR_USERNAME/aeromesh-swarm-disaster-response.git
+git remote add origin git@github.com:nsd-surya-dinesh/aeromesh-swarm-disaster-response.git
 ```
 
 ---
@@ -103,18 +103,18 @@ Add these badges to your README.md for professional presentation:
 ### Essential Badges
 
 ```markdown
-[![Tests](https://img.shields.io/badge/tests-19%2F19%20passing-brightgreen)](https://github.com/YOUR_USERNAME/aeromesh-swarm-disaster-response/tree/main/tests)
+[![Tests](https://img.shields.io/badge/tests-19%2F19%20passing-brightgreen)](https://github.com/nsd-surya-dinesh/aeromesh-swarm-disaster-response/tree/main/tests)
 [![Python](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![Code Quality](https://img.shields.io/badge/code%20quality-A-brightgreen)](https://github.com/YOUR_USERNAME/aeromesh-swarm-disaster-response)
+[![Code Quality](https://img.shields.io/badge/code%20quality-A-brightgreen)](https://github.com/nsd-surya-dinesh/aeromesh-swarm-disaster-response)
 ```
 
 ### Advanced Badges (Optional - Set up later)
 
 ```markdown
-[![CI](https://github.com/YOUR_USERNAME/aeromesh-swarm-disaster-response/workflows/CI/badge.svg)](https://github.com/YOUR_USERNAME/aeromesh-swarm-disaster-response/actions)
-[![codecov](https://codecov.io/gh/YOUR_USERNAME/aeromesh-swarm-disaster-response/branch/main/graph/badge.svg)](https://codecov.io/gh/YOUR_USERNAME/aeromesh-swarm-disaster-response)
-[![Documentation](https://img.shields.io/badge/docs-latest-blue)](https://github.com/YOUR_USERNAME/aeromesh-swarm-disaster-response/tree/main/docs)
+[![CI](https://github.com/nsd-surya-dinesh/aeromesh-swarm-disaster-response/workflows/CI/badge.svg)](https://github.com/nsd-surya-dinesh/aeromesh-swarm-disaster-response/actions)
+[![codecov](https://codecov.io/gh/nsd-surya-dinesh/aeromesh-swarm-disaster-response/branch/main/graph/badge.svg)](https://codecov.io/gh/nsd-surya-dinesh/aeromesh-swarm-disaster-response)
+[![Documentation](https://img.shields.io/badge/docs-latest-blue)](https://github.com/nsd-surya-dinesh/aeromesh-swarm-disaster-response/tree/main/docs)
 ```
 
 ### Competition-Specific Badges
@@ -154,7 +154,7 @@ git push origin v1.0.0-stage1
 
 ### Create Release on GitHub Web Interface
 
-1. Go to: `https://github.com/YOUR_USERNAME/aeromesh-swarm-disaster-response/releases/new`
+1. Go to: `https://github.com/nsd-surya-dinesh/aeromesh-swarm-disaster-response/releases/new`
 
 2. **Choose tag**: `v1.0.0-stage1`
 
@@ -490,11 +490,11 @@ git log --all --full-history --source --pickaxe-regex -S"(password|secret|api_ke
 
 Provide judges with:
 
-1. **Repository URL**: `https://github.com/YOUR_USERNAME/aeromesh-swarm-disaster-response`
+1. **Repository URL**: `https://github.com/nsd-surya-dinesh/aeromesh-swarm-disaster-response`
 2. **Release Tag**: `v1.0.0-stage1`
 3. **Quick Start Command**:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/aeromesh-swarm-disaster-response.git
+   git clone https://github.com/nsd-surya-dinesh/aeromesh-swarm-disaster-response.git
    cd aeromesh-swarm-disaster-response
    git checkout v1.0.0-stage1
    pip install -r requirements.txt
@@ -504,10 +504,10 @@ Provide judges with:
 
 ### Sharing Links
 
-- **Main Repository**: `https://github.com/YOUR_USERNAME/aeromesh-swarm-disaster-response`
-- **Stage 1 Release**: `https://github.com/YOUR_USERNAME/aeromesh-swarm-disaster-response/releases/tag/v1.0.0-stage1`
-- **Technical Docs**: `https://github.com/YOUR_USERNAME/aeromesh-swarm-disaster-response/tree/main/docs`
-- **Test Results**: `https://github.com/YOUR_USERNAME/aeromesh-swarm-disaster-response/actions` (if CI is set up)
+- **Main Repository**: `https://github.com/nsd-surya-dinesh/aeromesh-swarm-disaster-response`
+- **Stage 1 Release**: `https://github.com/nsd-surya-dinesh/aeromesh-swarm-disaster-response/releases/tag/v1.0.0-stage1`
+- **Technical Docs**: `https://github.com/nsd-surya-dinesh/aeromesh-swarm-disaster-response/tree/main/docs`
+- **Test Results**: `https://github.com/nsd-surya-dinesh/aeromesh-swarm-disaster-response/actions` (if CI is set up)
 
 ---
 
@@ -552,7 +552,7 @@ If you make significant improvements:
 git remote -v
 
 # Update if incorrect
-git remote set-url origin https://github.com/YOUR_USERNAME/aeromesh-swarm-disaster-response.git
+git remote set-url origin https://github.com/nsd-surya-dinesh/aeromesh-swarm-disaster-response.git
 ```
 
 ### "Authentication failed" Error

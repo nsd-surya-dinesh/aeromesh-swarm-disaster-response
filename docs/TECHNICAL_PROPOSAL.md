@@ -1,24 +1,25 @@
 # AeroMesh-Swarm: Resilient Multi-Hop UAV Swarm for Post-Disaster Reconnaissance and Aerial Mesh Communication
 ## Technical Proposal for Stage 1: Preliminary Design Verification
 
-**Team / Author:** Naga Surya Dinesh & AeroMesh Development Team  
+**Challenge Track:** Pushpak Grand Challenge 2026 (Techfest, IIT Bombay) — Autonomous Multi-UAV Swarm for BVLOS Disaster Reconnaissance  
+**Team / Author:** Naga Surya Dinesh ([@nsd-surya-dinesh](https://github.com/nsd-surya-dinesh)) & AeroMesh Development Team  
 **Affiliation:** Autonomous Robotics & Swarm Intelligence Laboratory  
-**Challenge Track:** Multi-UAV Autonomous Disaster Response & Aerial Mesh Networking  
+**Submission Email Target:** `pushpak_gc2026@aero.iitb.ac.in`  
 **Date:** September 2026  
 
 ---
 
 ### Executive Summary
-Post-disaster environments (e.g., severe earthquakes, catastrophic landslides, collapsed infrastructure) render terrestrial cellular and wired communication networks inoperable. Emergency first responders rely critically on rapid situational awareness, aerial reconnaissance, and continuous data connectivity from a Ground Control Station (GCS) deployed outside the hazard perimeter. 
+Post-disaster environments (e.g., severe earthquakes, catastrophic landslides, collapsed infrastructure) render terrestrial cellular and wired communication networks inoperable. Emergency first responders rely critically on rapid situational awareness, Beyond Visual Line of Sight (BVLOS) aerial reconnaissance, and continuous data connectivity from a Ground Control Station (GCS) deployed outside the hazard perimeter. 
 
 This proposal introduces **AeroMesh-Swarm**, an integrated, decentralized, communication-aware multi-UAV swarm framework engineered to:
-1. Autonomously survey dispersed Points of Interest (PoIs) across rugged disaster zones.
+1. Autonomously survey dispersed Points of Interest (PoIs) across rugged disaster zones under BVLOS constraints.
 2. Establish and dynamically maintain a self-healing, multi-hop Air-to-Air (A2A) and Air-to-Ground (A2G) wireless mesh network.
 3. Formulate optimal Steiner-point relay positions using Artificial Potential Fields (APF).
 4. Perform distributed task allocation via Consensus-Based Bundle Algorithms (CBBA) under strict aerodynamic battery constraints and dynamic emergency insertions.
 5. Reconfigure network topology autonomously when UAVs encounter hardware failures, signal attenuation, or mandatory Return-to-Base (RTB) recharging cycles.
 
-The proposed architecture is validated through high-fidelity 3D simulation with empirical wireless channel modeling (ITU-R P.1411 probabilistic Line-of-Sight, shadow fading, Shannon capacity), 3D kinodynamics, energy dissipation models, and automated scenario benchmarking.
+The proposed architecture is validated through high-fidelity 3D simulation with empirical wireless channel modeling (ITU-R P.1411 probabilistic Line-of-Sight, shadow fading, Shannon capacity), 3D kinodynamics, energy dissipation models, and automated scenario benchmarking for the Pushpak Grand Challenge 2026.
 
 ---
 
@@ -192,6 +193,12 @@ Swarm Survival Rate (%)          | 100.0%       | 100.0%       | 100.0%       | 
 | **Feasibility** | Lightweight, modular Python architecture with zero heavy proprietary dependencies; verified across 4 benchmarks | Readily deployable on embedded companion computers (Raspberry Pi 4 / Nvidia Jetson Orin Nano) |
 | **Reproducibility** | Full automated test suite (19/19 unit/integration tests passing), CLI scenario runners, chart generators | 100% verifiable out-of-the-box in under 60 seconds |
 | **Safety & Redundancy** | Dynamic RTB thresholds, collision avoidance potential fields, continuous heartbeat fail-safes | Zero UAV battery exhaustion crashes; full graceful degradation during severe node faults |
+
+#### 5.1 Technical Trade-offs & Practical Operational Boundaries
+To provide a realistic engineering evaluation for competition judges and Stage 2 transition:
+1. **Multi-Hop Queue Delay Scaling in Non-Line-of-Sight Channels**: In deep canyon environments with 3-hop relay chains (Scenario 2), end-to-end packet latency scales from a baseline of ~101.7 ms to 282.2 ms due to intermediate store-and-forward processing and ETX link re-evaluations. Priority queue partitioning ensures high-priority survivor alerts are prioritized ahead of background telemetry.
+2. **Hover Power vs. Cruising Aerodynamics**: Relay UAVs held in stationary hover at Steiner points consume ~18% higher power per unit time than scout UAVs flying at optimal aerodynamic cruise velocity ($v_{\text{cruise}} = 12\text{ m/s}$), particularly under wind gusts exceeding 7 m/s. The dynamic RTB threshold $E_{\text{safe}}$ accounts for this differential burn rate to trigger early scout-to-relay handoffs.
+3. **Consensus Message Churn in High-Agent Swarms**: For swarms where $N > 25$, bundle bidding broadcasts across the multi-hop mesh introduce an initial 1.0–1.5s communication burst. Hierarchical spatial partitioning is scheduled for Stage 2 ROS 2 DDS implementation to confine auction scopes locally.
 
 ---
 

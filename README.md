@@ -19,15 +19,14 @@
 
 ## 🎯 Overview
 
-**AeroMesh-Swarm** enables a fleet of battery-constrained UAVs to autonomously survey disaster zones while maintaining continuous connectivity with a Ground Control Station (GCS) through self-healing mesh networks. The system handles node failures, dynamic mission changes, and long-range communication challenges without centralized coordination.
+**AeroMesh-Swarm** is developed for the **PUSHPAK Grand Challenge 2026** at **Techfest, IIT Bombay**, addressing autonomous Beyond Visual Line of Sight (**BVLOS**) disaster reconnaissance in communication-denied environments. The system enables a fleet of battery-constrained UAVs to autonomously survey disaster zones while maintaining continuous telemetry and payload connectivity with a Ground Control Station (GCS) through self-healing multi-hop mesh networks. It eliminates single points of failure by handling dynamic node loss, mission preemption, and long-range RF shadowing without centralized coordination.
 
 ### 🎬 Demo Preview
 
-> **Note**: Add demo GIF/video after running: `python run_simulation.py --scenario 3 --record`
-
-```
-[Demo GIF placeholder - Scenario 3: Dynamic fault recovery with autonomous relay replacement]
-```
+<div align="center">
+  <img src="scenario_3_demo.gif" alt="AeroMesh-Swarm Scenario 3 Demonstration - Dynamic Fault Recovery and Autonomous Relay Replacement" width="720" />
+  <p><em>Scenario 3: Mid-mission emergency survivor discovery, autonomous relay failure detection, and self-healing handoff (<2.1s recovery).</em></p>
+</div>
 
 ---
 
@@ -57,7 +56,7 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/aeromesh-swarm-disaster-response.git
+git clone https://github.com/nsd-surya-dinesh/aeromesh-swarm-disaster-response.git
 cd aeromesh-swarm-disaster-response
 
 # Install dependencies
@@ -282,7 +281,7 @@ Contributions are welcome! Please read our contributing guidelines before submit
 
 ```bash
 # Clone repository
-git clone https://github.com/YOUR_USERNAME/aeromesh-swarm-disaster-response.git
+git clone https://github.com/nsd-surya-dinesh/aeromesh-swarm-disaster-response.git
 cd aeromesh-swarm-disaster-response
 
 # Create virtual environment
@@ -296,6 +295,24 @@ pip install pytest pytest-cov black flake8
 # Run tests before making changes
 python -m pytest tests/ -v
 ```
+
+---
+
+## ⚠️ Technical Trade-offs & Limitations
+
+In the spirit of engineering transparency and realistic hardware transition planning, the following trade-offs and operational boundaries are characterized:
+
+1. **Multi-Hop Latency Scaling in Extreme Topography**:
+   - In deep canyon / NLOS scenarios (Scenario 2), end-to-end packet latency scales from a baseline of ~101.7 ms to 282.2 ms over 3-hop relay chains due to cumulative store-and-forward ETX queue delays.
+   - *Mitigation*: Adaptive queue prioritization guarantees immediate forwarding of high-priority survivor telemetry over standard periodic heartbeats.
+
+2. **Station-Keeping Aerodynamic Energy Dissipation**:
+   - UAVs assigned as Steiner relays consume ~15–20% more power during stationary hover under adverse crosswinds (>7 m/s) compared to cruising scouts operating at optimal aerodynamic lift velocity ($v_{\text{cruise}} = 12\text{ m/s}$).
+   - *Mitigation*: The `HealthMonitor` module accounts for dynamic wind speed in the RTB threshold calculation ($E_{\text{safe}}$) and proactively dispatches replacement relays before battery drop below safe limits.
+
+3. **CBBA Auction Convergence Overhead in Dense Swarms**:
+   - For swarms exceeding $N > 25$ agents, decentralized consensus bundling introduces an initial 0.8–1.4 second message propagation burst across the mesh.
+   - *Mitigation*: Sub-swarm spatial clustering is planned for Stage 2 to bound consensus latency within localized geographical sectors.
 
 ---
 
@@ -315,8 +332,8 @@ If you use **AeroMesh-Swarm** in your research or project, please cite:
   title = {AeroMesh-Swarm: Resilient Multi-Hop UAV Swarm for Disaster Response},
   year = {2026},
   month = {September},
-  url = {https://github.com/YOUR_USERNAME/aeromesh-swarm-disaster-response},
-  note = {Stage 1 Verified: 100\% coverage, 100\% PDR, self-healing demonstrated}
+  url = {https://github.com/nsd-surya-dinesh/aeromesh-swarm-disaster-response},
+  note = {Stage 1 Verified: Pushpak Grand Challenge 2026, Techfest IIT Bombay}
 }
 ```
 
@@ -324,33 +341,35 @@ If you use **AeroMesh-Swarm** in your research or project, please cite:
 
 ## 🙏 Acknowledgments
 
+- **Pushpak Grand Challenge 2026 & Techfest, IIT Bombay** for the BVLOS multi-UAV problem statement
 - **ITU-R P.1411** for wireless channel propagation models
 - **CBBA Algorithm** based on research by MIT ACLS Lab
 - **Python Open Source Community** for excellent scientific computing libraries
-- **Competition Organizers** for providing challenge scenarios
 
 ---
 
 ## 📞 Contact & Support
 
 ### For Judges & Evaluators
-- **Primary Contact**: nagasuryadinesh@gmail.com
-- **Technical Questions**: Open an [issue](https://github.com/YOUR_USERNAME/aeromesh-swarm-disaster-response/issues)
+- **Primary Contact**: Naga Surya Dinesh (`nagasuryadinesh@gmail.com`)
+- **GitHub**: [@nsd-surya-dinesh](https://github.com/nsd-surya-dinesh)
+- **Technical Questions**: Open an [issue](https://github.com/nsd-surya-dinesh/aeromesh-swarm-disaster-response/issues)
 - **Quick Demo**: `python run_simulation.py --benchmark-all`
 
 ### Resources
 - **Documentation**: [docs/](docs/)
-- **Issue Tracker**: [GitHub Issues](https://github.com/YOUR_USERNAME/aeromesh-swarm-disaster-response/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/YOUR_USERNAME/aeromesh-swarm-disaster-response/discussions)
+- **Issue Tracker**: [GitHub Issues](https://github.com/nsd-surya-dinesh/aeromesh-swarm-disaster-response/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/nsd-surya-dinesh/aeromesh-swarm-disaster-response/discussions)
 
 ---
 
 ## 🏆 Competition Information
 
-**Competition**: UAV Swarm Coordination Challenge 2026  
-**Stage**: Stage 1 - Python Simulation Verified  
-**Submission Date**: September 2026  
-**Team**: AeroMesh Development Team
+**Competition**: Pushpak Grand Challenge 2026 (Techfest, IIT Bombay)  
+**Track**: Autonomous Multi-UAV Swarm for BVLOS Disaster Reconnaissance  
+**Stage**: Stage 1 - Preliminary Design Verification (Completed)  
+**Submission Email**: `pushpak_gc2026@aero.iitb.ac.in`  
+**Team Lead**: Naga Surya Dinesh ([@nsd-surya-dinesh](https://github.com/nsd-surya-dinesh))
 
 ### Verification Checklist
 - [x] 100% PoI Coverage across all scenarios

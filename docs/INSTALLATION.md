@@ -16,7 +16,8 @@ This guide provides step-by-step instructions to set up, test, and run the **Aer
 
 #### Step 1: Clone or Navigate to the Repository
 ```bash
-cd uav_swarm_disaster_response
+git clone https://github.com/nsd-surya-dinesh/aeromesh-swarm-disaster-response.git
+cd aeromesh-swarm-disaster-response
 ```
 
 #### Step 2: Create a Virtual Environment (Recommended)

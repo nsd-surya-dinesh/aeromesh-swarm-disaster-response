@@ -57,8 +57,8 @@ cd uav_swarm_disaster_response
 
 **Option B: From GitHub (if provided)**
 ```bash
-git clone <repository-url>
-cd uav_swarm_disaster_response
+git clone https://github.com/nsd-surya-dinesh/aeromesh-swarm-disaster-response.git
+cd aeromesh-swarm-disaster-response
 ```
 
 ### 2.2 One-Command Setup
