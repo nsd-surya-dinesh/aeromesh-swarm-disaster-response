@@ -2,7 +2,7 @@
 ## Technical Proposal for Stage 1: Preliminary Design Verification
 
 **Challenge Track:** Pushpak Grand Challenge 2026 (Techfest, IIT Bombay) — Autonomous Multi-UAV Swarm for BVLOS Disaster Reconnaissance  
-**Team / Author:** Naga Surya Dinesh ([@nsd-surya-dinesh](https://github.com/nsd-surya-dinesh)) & AeroMesh Development Team  
+**Author / Developer:** Naga Surya Dinesh ([@nsd-surya-dinesh](https://github.com/nsd-surya-dinesh)) (Solo Developer)  
 **Affiliation:** Autonomous Robotics & Swarm Intelligence Laboratory  
 **Submission Email Target:** `pushpak_gc2026@aero.iitb.ac.in`  
 **Date:** September 2026  

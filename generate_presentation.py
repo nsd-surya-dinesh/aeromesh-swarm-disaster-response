@@ -118,7 +118,7 @@ def create_presentation():
     tf_i.word_wrap = True
 
     p_i1 = tf_i.paragraphs[0]
-    p_i1.text = "Team / Author: Naga Surya Dinesh (Lead) & AeroMesh Development Team"
+    p_i1.text = "Author / Developer: Naga Surya Dinesh (Solo Developer)"
     p_i1.font.size = Pt(13)
     p_i1.font.bold = True
     p_i1.font.color.rgb = RGBColor(255, 255, 255)
@@ -777,7 +777,7 @@ def create_presentation():
 
     p_info = tf_bot.add_paragraph()
     p_info.text = (
-        "Team Lead: Naga Surya Dinesh  |  Email: nagasuryadinesh@gmail.com  |  Affiliation: Autonomous Robotics & Swarm Lab\n"
+        "Author: Naga Surya Dinesh (Solo Developer)  |  Email: nagasuryadinesh@gmail.com  |  Affiliation: Autonomous Robotics & Swarm Lab\n"
         "Repository: https://github.com/nsd-surya-dinesh/aeromesh-swarm-disaster-response\n"
         "Submission Target: pushpak_gc2026@aero.iitb.ac.in  |  Pushpak Grand Challenge 2026, Techfest IIT Bombay"
     )

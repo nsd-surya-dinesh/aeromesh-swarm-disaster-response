@@ -328,7 +328,7 @@ If you use **AeroMesh-Swarm** in your research or project, please cite:
 
 ```bibtex
 @software{aeromesh_swarm_2026,
-  author = {Naga Surya Dinesh and AeroMesh Development Team},
+  author = {Naga Surya Dinesh},
   title = {AeroMesh-Swarm: Resilient Multi-Hop UAV Swarm for Disaster Response},
   year = {2026},
   month = {September},
@@ -369,7 +369,7 @@ If you use **AeroMesh-Swarm** in your research or project, please cite:
 **Track**: Autonomous Multi-UAV Swarm for BVLOS Disaster Reconnaissance  
 **Stage**: Stage 1 - Preliminary Design Verification (Completed)  
 **Submission Email**: `pushpak_gc2026@aero.iitb.ac.in`  
-**Team Lead**: Naga Surya Dinesh ([@nsd-surya-dinesh](https://github.com/nsd-surya-dinesh))
+**Author / Developer**: Naga Surya Dinesh ([@nsd-surya-dinesh](https://github.com/nsd-surya-dinesh))
 
 ### Verification Checklist
 - [x] 100% PoI Coverage across all scenarios

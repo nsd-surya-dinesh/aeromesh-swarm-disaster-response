@@ -2,7 +2,7 @@
 ## UAV Swarm Disaster Response Challenge - Preliminary Design Verification
 
 **Submission Date:** September 14, 2026  
-**Team Lead:** Naga Surya Dinesh  
+**Author / Developer:** Naga Surya Dinesh (Solo Developer)  
 **Project Name:** AeroMesh-Swarm  
 **Repository:** `uav_swarm_disaster_response/`
 
