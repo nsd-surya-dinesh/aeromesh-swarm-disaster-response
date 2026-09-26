@@ -7,7 +7,7 @@
 
 [![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)]()
 [![PDR](https://img.shields.io/badge/PDR-100%25-brightgreen)]()
-[![Competition](https://img.shields.io/badge/stage-1%20verified-success)]()
+[![Competition](https://img.shields.io/badge/stage-1%20completed-lightgrey)]()
 
 **Communication-aware, decentralized multi-UAV swarm framework for autonomous post-disaster reconnaissance and resilient aerial mesh networking**
 
@@ -107,10 +107,10 @@ python run_simulation.py --scenario 3 --gui
 |--------|--------------|------------|-----------|---------------|
 | **Coverage (%)** | 100.0 | 100.0 | 100.0 | 100.0 |
 | **Packet Delivery Ratio (%)** | 100.0 | 100.0 | 100.0 | 100.0 |
-| **Avg End-to-End Latency (ms)** | 101.7 | 282.2 | 123.0 | 114.4 |
+| **Avg End-to-End Latency (ms)** | 141.5 | 495.8 | 104.2 | 135.6 |
 | **PoIs Surveyed** | 10 / 10 | 8 / 8 | 8 / 8 | 16 / 16 |
-| **Mission Duration (seconds)** | 289.0 | 256.0 | 229.9 | 351.9 |
-| **Survey Rate (PoI / min)** | 2.1 | 1.9 | 2.1 | 2.7 |
+| **Mission Duration (seconds)** | 233.0 | 256.9 | 167.6 | 301.9 |
+| **Survey Rate (PoI / min)** | 2.6 | 1.9 | 2.9 | 3.2 |
 | **Swarm Survival Rate (%)** | 100.0 | 100.0 | 100.0 | 100.0 |
 
 ### Key Achievements

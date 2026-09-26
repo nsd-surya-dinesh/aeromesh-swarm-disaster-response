@@ -168,20 +168,20 @@ Metric                           | S1: Baseline | S2: Canyon   | S3: Fault    | 
 --------------------------------------------------------------------------------
 Coverage (%)                     | 100.0%       | 100.0%       | 100.0%       | 100.0%
 Packet Delivery Ratio (PDR)      | 100.0%       | 100.0%       | 100.0%       | 100.0%
-Avg End-to-End Latency (ms)      | 101.7 ms     | 282.2 ms     | 123.0 ms     | 114.4 ms
+Avg End-to-End Latency (ms)      | 141.5 ms     | 495.8 ms     | 104.2 ms     | 135.6 ms
 PoIs Successfully Surveyed       | 10 / 10      | 8 / 8        | 8 / 8        | 16 / 16
-Mission Duration to 100% (s)     | 289.0 s      | 256.0 s      | 229.9 s      | 351.9 s
-Total Energy Consumed (kWh)      | 0.12 kWh     | 0.14 kWh     | 0.11 kWh     | 0.18 kWh
-Survey Rate (PoI / min)          | 2.1 PoI/min  | 1.9 PoI/min  | 2.1 PoI/min  | 2.7 PoI/min
+Mission Duration to 100% (s)     | 233.0 s      | 256.9 s      | 167.6 s      | 301.9 s
+Total Energy Consumed (kWh)      | 0.10 kWh     | 0.10 kWh     | 0.10 kWh     | 0.11 kWh
+Survey Rate (PoI / min)          | 2.6 PoI/min  | 1.9 PoI/min  | 2.9 PoI/min  | 3.2 PoI/min
 Swarm Survival Rate (%)          | 100.0%       | 100.0%       | 100.0%       | 100.0%
 ================================================================================
 ```
 
 #### Benchmark Observations:
-1. **Scenario 1 (Baseline Survey)**: 5 UAVs surveyed 10 PoIs in 289s with 100% PDR and minimal single-hop latency (101.7 ms).
-2. **Scenario 2 (Deep Canyon / LoS Obstacle)**: Distant PoIs required dynamic 3-hop relay formation. Latency increased to 282.2 ms due to multi-hop packet routing, but 100% PDR was preserved without packet loss.
-3. **Scenario 3 (Dynamic Emergency & Relay Failure)**: Mid-mission survivor discovery (Priority 8.0) triggered immediate preemption in CBBA bundles. When Relay-1 failed at $t=180s$, the self-healing engine dispatched a standby UAV within 2.1s, restoring 100% connectivity and completing all surveys in 229.9s.
-4. **Scenario 4 (Endurance & Battery Swapping)**: 8 UAVs surveyed 16 distant PoIs across 351.9s. UAVs successfully cycled through GCS charging pads and seamlessly handed off relay duties.
+1. **Scenario 1 (Baseline Survey)**: 5 UAVs surveyed 10 PoIs in 233.0s with 100% PDR and minimal single-hop latency (141.5 ms).
+2. **Scenario 2 (Deep Canyon / LoS Obstacle)**: Distant PoIs required dynamic 3-hop relay formation. Latency increased to 495.8 ms due to multi-hop packet routing, but 100% PDR was preserved without packet loss.
+3. **Scenario 3 (Dynamic Emergency & Relay Failure)**: Mid-mission survivor discovery (Priority 8.0) triggered immediate preemption in CBBA bundles. When Relay-1 failed at $t=90$s (approx), the self-healing engine dispatched a standby UAV within 2.1s, restoring 100% connectivity and completing all surveys in 167.6s.
+4. **Scenario 4 (Endurance & Battery Swapping)**: 8 UAVs surveyed 16 distant PoIs across 301.9s. UAVs successfully cycled through GCS charging pads and seamlessly handed off relay duties.
 
 ---
 

@@ -89,6 +89,9 @@ class MissionSimulator:
             self.physics_engine.update_uav_kinematics(uav, self.dt)
             self.physics_engine.update_energy(uav, self.dt)
 
+        # Track safety metrics
+        self._update_safety_metrics()
+
         # 5. Health monitoring (battery checks, RTB, relay handoffs)
         self.health_monitor.check_node_vitality(self.dt)
 
@@ -188,6 +191,31 @@ class MissionSimulator:
                         payload={'uav_id': uav.id, 'poi_id': uav.assigned_poi, 'battery': uav.battery_level}
                     )
                     self.mesh_router.send_packet(packet)
+
+    def _update_safety_metrics(self):
+        """Updates safety metrics: min UAV separation, geofence violations, and collisions."""
+        uavs = list(self.mission_state.uavs.values())
+
+        # Update minimum UAV separation and check for collisions
+        for i in range(len(uavs)):
+            for j in range(i+1, len(uavs)):
+                dist = uavs[i].distance_to_uav(uavs[j])
+                if dist < self.mission_state.min_uav_separation_observed:
+                    self.mission_state.min_uav_separation_observed = dist
+                if dist < 1.0:  # collision threshold (1 meter)
+                    self.mission_state.collision_count += 1
+
+        # Check for geofence violations (at least one UAV outside the 2000x2000x120m boundary)
+        geofence_violated = False
+        for uav in uavs:
+            if (uav.position.x < 0 or uav.position.x > 2000 or
+                uav.position.y < 0 or uav.position.y > 2000 or
+                uav.position.z < 0 or uav.position.z > 120):
+                geofence_violated = True
+                break
+
+        if geofence_violated:
+            self.mission_state.geofence_violation_count += 1
 
     def run_simulation(self, max_time: Optional[float] = None):
         """Runs the full simulation until completion or timeout"""

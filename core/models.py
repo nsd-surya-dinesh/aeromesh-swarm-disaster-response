@@ -201,6 +201,11 @@ class MissionState:
     mission_failed: bool = False
     failure_reason: Optional[str] = None
 
+    # Safety metrics
+    min_uav_separation_observed: float = float('inf')
+    geofence_violation_count: int = 0
+    collision_count: int = 0
+
     # Event log
     events: List[Dict] = field(default_factory=list)
 

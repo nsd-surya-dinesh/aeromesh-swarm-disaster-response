@@ -58,10 +58,10 @@ class ChallengeMetricsReporter:
 
         # 5. Safety Metrics
         safety_metrics = {
-            'collision_count': 0,  # Enforced by APF collision avoidance
-            'min_inter_uav_separation_m': 15.0,  # Enforced threshold
+            'collision_count': self.mission_state.collision_count,
+            'min_inter_uav_separation_m': self.mission_state.min_uav_separation_observed,
             'battery_exhaustion_count': self._count_battery_exhaustions(),
-            'geo_fence_violations': 0,  # Enforced by altitude clamping
+            'geo_fence_violations': self.mission_state.geofence_violation_count,
             'swarm_survival_rate_percent': self.metrics_engine.calculate_swarm_survival_rate()
         }
 

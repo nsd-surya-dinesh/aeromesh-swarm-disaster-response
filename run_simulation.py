@@ -106,6 +106,18 @@ def run_all_benchmarks():
         sim = builder()
         sim.run_simulation(max_time=600.0)
         metrics = MetricsEngine(sim.mission_state).generate_full_metrics_summary()
+        # Get additional metrics from mesh router and GCS
+        network_stats = sim.mesh_router.get_network_stats()
+        gcs = sim.mission_state.gcs
+        packets_sent = gcs.packets_received + gcs.packets_dropped
+        packets_delivered = gcs.packets_received
+        packets_dropped = gcs.packets_dropped
+        avg_hops = network_stats['avg_hops']
+        # Augment metrics dictionary
+        metrics['packets_sent'] = packets_sent
+        metrics['packets_delivered'] = packets_delivered
+        metrics['packets_dropped'] = packets_dropped
+        metrics['avg_hops'] = avg_hops
         all_metrics.append(metrics)
         names.append(name)
 
@@ -119,6 +131,10 @@ def run_all_benchmarks():
         ('Coverage (%)', 'coverage_percentage'),
         ('PDR (%)', 'packet_delivery_ratio_pdr'),
         ('Avg Latency (ms)', 'avg_end_to_end_latency_ms'),
+        ('Packets Sent', 'packets_sent'),
+        ('Packets Delivered', 'packets_delivered'),
+        ('Packets Dropped', 'packets_dropped'),
+        ('Avg Hops', 'avg_hops'),
         ('PoIs Surveyed', 'pois_surveyed'),
         ('Total Energy (kWh)', 'total_energy_kwh'),
         ('Survey Rate (PoI/min)', 'survey_rate_pois_per_min'),
