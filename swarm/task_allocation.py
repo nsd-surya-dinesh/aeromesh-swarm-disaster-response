@@ -119,6 +119,7 @@ class CBBATaskAllocator:
             return
 
         # Initialize tracking tables if empty
+        self.last_iteration_count = 0  # For instrumentation
         unsurveyed = self.mission_state.get_unsurveyed_pois()
         for poi in unsurveyed:
             if poi.id not in self.winning_bids:
@@ -185,7 +186,10 @@ class CBBATaskAllocator:
                 uav.task_path = reconstructed_path
 
             if not changes_made:
+                self.last_iteration_count = iteration + 1
                 break  # Converged
+        else:
+            self.last_iteration_count = self.cfg_swarm.cbba_max_iterations
 
         # Update active target positions for scouts
         for uav in scout_uavs:

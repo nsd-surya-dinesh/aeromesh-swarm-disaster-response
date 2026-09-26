@@ -104,7 +104,7 @@ def run_scalability_benchmark():
         packets_dropped = gcs.packets_dropped
         avg_hops = network_stats['avg_hops']
 
-        # CBBA performance metrics (approximate)
+        # CBBA performance metrics (actual from allocator)
         cbba_iterations = getattr(sim.task_allocator, 'last_iteration_count', 0)
 
         result = {
