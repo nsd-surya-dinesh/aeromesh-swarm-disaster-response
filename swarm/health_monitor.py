@@ -80,12 +80,20 @@ class HealthMonitor:
         Triggers network healing if an active relay has unexpectedly failed.
         """
         current_time = self.mission_state.time
+        heartbeat_timeout = self.cfg_swarm.failure_detection_timeout
 
         for uav_id, uav in list(self.mission_state.uavs.items()):
             if not uav.is_operational():
                 continue
 
-            # Update heartbeat timestamp
+            # Check heartbeat timeout - detect stale heartbeat
+            time_since_heartbeat = current_time - uav.last_heartbeat
+            if time_since_heartbeat > heartbeat_timeout:
+                # Heartbeat timeout - UAV may have failed
+                self._handle_heartbeat_timeout(uav)
+                continue
+
+            # Update heartbeat timestamp (only for operational UAVs with recent heartbeat)
             uav.last_heartbeat = current_time
 
             # Check battery
@@ -113,6 +121,30 @@ class HealthMonitor:
                     f'UAV-{uav.id} fully recharged and returned to STANDBY'
                 )
 
+    def _handle_heartbeat_timeout(self, uav: UAV):
+        """
+        Handles heartbeat timeout - UAV has not reported in within threshold.
+        Triggers relay handoff if this was a critical relay, then marks UAV as failed.
+        """
+        self.mission_state.add_event(
+            'heartbeat_timeout',
+            f'UAV-{uav.id} heartbeat timeout detected - possible failure'
+        )
+
+        # If UAV was a relay, initiate handoff before marking failed
+        if uav.role == UAVRole.RELAY:
+            self._handle_relay_departure(uav)
+
+        # Mark UAV as failed
+        uav.role = UAVRole.FAILED
+        uav.state = UAVState.FAILED
+        uav.target_position = None
+
+        self.mission_state.add_event(
+            'node_failed',
+            f'UAV-{uav.id} marked as FAILED due to heartbeat timeout'
+        )
+
     def handle_unexpected_node_failure(self, failed_uav_id: int):
         """
         Simulates unexpected hardware fault or crash of a UAV.
@@ -122,6 +154,10 @@ class HealthMonitor:
             return
 
         uav = self.mission_state.uavs[failed_uav_id]
+
+        # If it was a relay, trigger immediate emergency healing BEFORE marking failed
+        was_relay = (uav.role == UAVRole.RELAY)
+
         uav.role = UAVRole.FAILED
         uav.state = UAVState.FAILED
         uav.target_position = None
@@ -131,22 +167,23 @@ class HealthMonitor:
             f'CRITICAL: UAV-{failed_uav_id} experienced catastrophic failure!'
         )
 
-        # If it was a relay, trigger immediate emergency healing
-        candidate_id = self.relay_manager.find_optimal_relay_candidate(failed_uav_id)
-        if candidate_id is not None:
-            replacement = self.mission_state.uavs[candidate_id]
-            replacement.role = UAVRole.RELAY
-            replacement.state = UAVState.RELAYING
-            replacement.target_position = Vector3D(
-                uav.position.x,
-                uav.position.y,
-                uav.position.z
-            )
-            replacement.task_bundle.clear()
-            replacement.task_path.clear()
-            replacement.assigned_poi = None
+        # Only trigger relay replacement if the failed UAV was actually a relay
+        if was_relay:
+            candidate_id = self.relay_manager.find_optimal_relay_candidate(failed_uav_id)
+            if candidate_id is not None:
+                replacement = self.mission_state.uavs[candidate_id]
+                replacement.role = UAVRole.RELAY
+                replacement.state = UAVState.RELAYING
+                replacement.target_position = Vector3D(
+                    uav.position.x,
+                    uav.position.y,
+                    uav.position.z
+                )
+                replacement.task_bundle.clear()
+                replacement.task_path.clear()
+                replacement.assigned_poi = None
 
-            self.mission_state.add_event(
-                'emergency_healing',
-                f'Self-healing triggered: UAV-{replacement.id} dispatched to replace failed UAV-{failed_uav_id}'
-            )
+                self.mission_state.add_event(
+                    'emergency_healing',
+                    f'Self-healing triggered: UAV-{replacement.id} dispatched to replace failed UAV-{failed_uav_id}'
+                )
