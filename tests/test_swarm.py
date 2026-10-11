@@ -131,6 +131,102 @@ class TestHealthMonitor:
 
         assert uav.state == UAVState.CHARGING, "UAV at GCS should charge"
 
+    def test_heartbeat_timeout_detection(self):
+        """Stale heartbeat should trigger timeout detection"""
+        mission_state = MissionState()
+        mission_state.time = 10.0  # Current time
+        mission_state.gcs = GCS(position=Vector3D(0, 0, 0))
+
+        # UAV with stale heartbeat (last heartbeat 6 seconds ago)
+        # Config: failure_detection_timeout = 5s, so this should trigger timeout
+        uav = UAV(id=0, position=Vector3D(100, 100, 50), battery_level=0.8)
+        uav.last_heartbeat = 4.0  # 6 seconds ago
+        uav.role = UAVRole.SCOUT
+        uav.state = UAVState.FLYING_TO_POI
+
+        mission_state.uavs[0] = uav
+
+        relay_mgr = SteinerRelayManager(mission_state)
+        monitor = HealthMonitor(mission_state, relay_mgr)
+
+        # Call check_node_vitality - should detect timeout
+        monitor.check_node_vitality(dt=0.1)
+
+        # UAV should be marked as failed due to heartbeat timeout
+        assert uav.state == UAVState.FAILED, "Stale heartbeat should trigger timeout and mark UAV as failed"
+
+        # Check that a heartbeat_timeout event was logged
+        event_types = [e['type'] for e in mission_state.events]
+        assert 'heartbeat_timeout' in event_types, "Should log heartbeat timeout event"
+
+    def test_relay_replacement_only_for_relays(self):
+        """Relay replacement should only occur when a relay fails, not for scouts"""
+        mission_state = MissionState()
+        mission_state.time = 0.0
+        mission_state.gcs = GCS(position=Vector3D(0, 0, 0))
+
+        # Create two UAVs: one scout, one relay
+        uav_scout = UAV(id=0, position=Vector3D(100, 100, 50), battery_level=0.9)
+        uav_scout.role = UAVRole.SCOUT
+        uav_scout.state = UAVState.FLYING_TO_POI
+        uav_scout.last_heartbeat = 0.0
+
+        uav_relay = UAV(id=1, position=Vector3D(200, 200, 50), battery_level=0.9)
+        uav_relay.role = UAVRole.RELAY
+        uav_relay.state = UAVState.RELAYING
+        uav_relay.last_heartbeat = 0.0
+
+        mission_state.uavs[0] = uav_scout
+        mission_state.uavs[1] = uav_relay
+
+        relay_mgr = SteinerRelayManager(mission_state)
+        monitor = HealthMonitor(mission_state, relay_mgr)
+
+        # Trigger failure of the SCOUT (not a relay)
+        monitor.handle_unexpected_node_failure(0)
+
+        # Scout should be failed
+        assert uav_scout.state == UAVState.FAILED, "Failed UAV should be marked as FAILED"
+
+        # Check events - should NOT have emergency_healing since scout was not a relay
+        event_types = [e['type'] for e in mission_state.events]
+        assert 'hardware_failure' in event_types, "Should log hardware failure"
+        # No emergency healing should occur for scout failure
+        assert 'emergency_healing' not in event_types, "Should not trigger emergency healing for non-relay failure"
+
+    def test_relay_failure_triggers_replacement(self):
+        """Relay failure should trigger emergency healing to find replacement"""
+        mission_state = MissionState()
+        mission_state.time = 0.0
+        mission_state.gcs = GCS(position=Vector3D(0, 0, 0))
+
+        # Create a relay and a standby UAV that can be promoted
+        uav_relay = UAV(id=0, position=Vector3D(100, 100, 50), battery_level=0.9)
+        uav_relay.role = UAVRole.RELAY
+        uav_relay.state = UAVState.RELAYING
+        uav_relay.last_heartbeat = 0.0
+
+        uav_standby = UAV(id=1, position=Vector3D(200, 200, 50), battery_level=0.9)
+        uav_standby.role = UAVRole.STANDBY
+        uav_standby.state = UAVState.IDLE
+        uav_standby.last_heartbeat = 0.0
+
+        mission_state.uavs[0] = uav_relay
+        mission_state.uavs[1] = uav_standby
+
+        relay_mgr = SteinerRelayManager(mission_state)
+        monitor = HealthMonitor(mission_state, relay_mgr)
+
+        # Trigger failure of the RELAY
+        monitor.handle_unexpected_node_failure(0)
+
+        # Relay should be failed
+        assert uav_relay.state == UAVState.FAILED, "Failed relay should be marked as FAILED"
+
+        # Check events - should have emergency_healing since it was a relay
+        event_types = [e['type'] for e in mission_state.events]
+        assert 'emergency_healing' in event_types, "Should trigger emergency healing for relay failure"
+
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

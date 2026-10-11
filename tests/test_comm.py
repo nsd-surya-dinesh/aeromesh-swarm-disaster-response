@@ -30,7 +30,10 @@ class TestRFChannel:
         dist_100m = Vector3D(100, 0, 50)
         dist_500m = Vector3D(500, 0, 50)
 
+        # Set random seed for deterministic shadow fading
+        np.random.seed(42)
         pl_100 = channel.calculate_path_loss_db(pos1, dist_100m, is_los=True)
+        np.random.seed(42)
         pl_500 = channel.calculate_path_loss_db(pos1, dist_500m, is_los=True)
 
         assert pl_500 > pl_100, "Path loss should increase with distance"
