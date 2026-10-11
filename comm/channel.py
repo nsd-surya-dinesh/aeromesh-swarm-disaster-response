@@ -1,7 +1,8 @@
 """
 Wireless RF Channel Modeling
 Implements Air-to-Air (A2A) and Air-to-Ground (A2G) channel models,
-probabilistic Line-of-Sight (LoS), path loss, shadow fading, SNR, and Shannon capacity.
+probabilistic Line-of-Sight (LoS), path loss, shadow fading, SNR, Shannon capacity,
+and RF interference modeling for jamming zones.
 """
 import math
 import numpy as np
@@ -73,7 +74,8 @@ class RFChannel:
         total_pl = fspl_db + excess_loss + shadowing
         return float(total_pl)
 
-    def calculate_link_quality(self, pos1: Vector3D, pos2: Vector3D) -> Dict[str, float]:
+    def calculate_link_quality(self, pos1: Vector3D, pos2: Vector3D,
+                                interference_event=None) -> Dict[str, float]:
         """
         Evaluates full link metrics between two spatial positions:
         - Received Signal Strength (RSSI in dBm)
@@ -81,6 +83,11 @@ class RFChannel:
         - Shannon Channel Capacity (Mbps)
         - Packet Delivery Probability (PDR)
         - Expected Transmission Count (ETX)
+
+        Parameters:
+            pos1: Position of first node
+            pos2: Position of second node
+            interference_event: Optional DynamicEventManager instance to apply RF interference
         """
         p_los = self.calculate_los_probability(pos1, pos2)
         is_los = np.random.random() < p_los
@@ -93,8 +100,19 @@ class RFChannel:
         # Received power
         rx_power_dbm = tx_power_dbm + 2 * self.cfg_uav.antenna_gain - path_loss_db
 
-        # SNR calculation
+        # Base SNR calculation
         snr_db = rx_power_dbm - self.cfg_rf.noise_floor
+
+        # Apply RF interference degradation if available
+        interference_snr_factor = 1.0
+        if interference_event is not None:
+            interference_snr_factor = interference_event.calculate_interference_snr_degradation(pos1, pos2)
+            if interference_snr_factor <= 1e-6:
+                # Severe jamming / complete blockage beyond receiver dynamic range
+                snr_db = -50.0
+            else:
+                snr_db = snr_db + 10 * math.log10(max(1e-6, interference_snr_factor))
+
         snr_linear = 10 ** (snr_db / 10.0)
 
         # Shannon Capacity: C = B * log2(1 + SNR)
@@ -121,5 +139,6 @@ class RFChannel:
             'capacity_mbps': capacity_mbps,
             'pdr': pdr,
             'etx': etx,
-            'is_connected': is_connected
+            'is_connected': is_connected,
+            'interference_factor': interference_snr_factor
         }

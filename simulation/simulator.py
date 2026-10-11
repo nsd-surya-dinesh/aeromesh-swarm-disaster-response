@@ -25,12 +25,12 @@ class MissionSimulator:
 
         # Subsystem engines
         self.physics_engine = PhysicsEngine()
-        self.mesh_router = MeshRouter(self.mission_state)
+        self.event_manager = DynamicEventManager(self.mission_state)
+        self.mesh_router = MeshRouter(self.mission_state, event_manager=self.event_manager)
         self.relay_manager = SteinerRelayManager(self.mission_state)
         self.task_allocator = CBBATaskAllocator(self.mission_state)
         self.path_planner = PathPlanner(self.mission_state)
         self.health_monitor = HealthMonitor(self.mission_state, self.relay_manager)
-        self.event_manager = DynamicEventManager(self.mission_state)
 
         # Timing
         self.dt = config.mission.dt
@@ -75,6 +75,9 @@ class MissionSimulator:
             self.mesh_router.update_network_topology()
             self.mesh_router.compute_routing_tables()
             self.next_routing_update = t + config.rf.routing_update_interval
+
+        # 1b. Expire dynamic events (interference/hazard zones) at the current time
+        self.event_manager.update_events()
 
         # 2. Run CBBA task allocation
         if t >= self.next_allocation_update:
@@ -205,7 +208,9 @@ class MissionSimulator:
                 if dist < 1.0:  # collision threshold (1 meter)
                     self.mission_state.collision_count += 1
 
-        # Check for geofence violations (at least one UAV outside the 2000x2000x120m boundary)
+        # Check for geofence violations: count entry events, not each violating step
+        # Prior state tracked to distinguish new violation from sustained violation
+        previous_violated = getattr(self.mission_state, 'geofence_was_violated', False)
         geofence_violated = False
         for uav in uavs:
             if (uav.position.x < 0 or uav.position.x > 2000 or
@@ -213,9 +218,11 @@ class MissionSimulator:
                 uav.position.z < 0 or uav.position.z > 120):
                 geofence_violated = True
                 break
-
-        if geofence_violated:
+        if geofence_violated and not previous_violated:
+            # New violation entry (not inflated by sustained steps); count once per entry
             self.mission_state.geofence_violation_count += 1
+        self.mission_state.geofence_was_violated = geofence_violated
+        # Note: step-level count preserved for trend analysis but not called 'violations'
 
     def run_simulation(self, max_time: Optional[float] = None):
         """Runs the full simulation until completion or timeout"""

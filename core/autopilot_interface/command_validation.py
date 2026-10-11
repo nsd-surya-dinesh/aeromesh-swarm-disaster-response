@@ -169,6 +169,15 @@ class CommandValidationSafetyLayer:
             # Yaw changes can imply mode changes in some autopilots
             pass  # allow without token for basic operation; strictly require token
 
+        # 9. Command deadline check
+        # Reject setpoints whose deadline has passed or mission deadline is exceeded
+        if setpoint.deadline is not None and time.monotonic() > setpoint.deadline:
+            return False, None, RejectionReason.COMMAND_EXPIRED, \
+                "Setpoint command_id=%d deadline %s has expired" % (setpoint.command_id, setpoint.deadline)
+        if setpoint.mission_deadline is not None and time.monotonic() > setpoint.mission_deadline:
+            return False, None, RejectionReason.MISSION_DEADLINE_EXCEEDED, \
+                "Setpoint command_id=%d mission_deadline %s has expired" % (setpoint.command_id, setpoint.mission_deadline)
+
         # 8. All checks passed — produce validated setpoint
         validated = ValidatedSetpoint(
             vehicle_id=setpoint.vehicle_id,
@@ -188,14 +197,16 @@ class CommandValidationSafetyLayer:
     # -------------------------------------------------------------------------
     def _get_max_altitude(self, vehicle_id: int) -> float:
         """Get max altitude for a specific vehicle, falling back to default."""
-        if vehicle_id in self.vehicles and self.vehicles[vehicle_id].max_altitude_m is not None:
-            return self.vehicles[vehicle_id].max_altitude_m
+        v = self.vehicles.get(vehicle_id)
+        if v is not None and getattr(v, 'max_altitude_m', None) is not None:
+            return v.max_altitude_m
         return MAX_ALTITUDE_M
 
     def _get_max_velocity(self, vehicle_id: int) -> float:
         """Get max velocity for a specific vehicle, falling back to default."""
-        if vehicle_id in self.vehicles and self.vehicles[vehicle_id].max_velocity_ms is not None:
-            return self.vehicles[vehicle_id].max_velocity_ms
+        v = self.vehicles.get(vehicle_id)
+        if v is not None and getattr(v, 'max_velocity_ms', None) is not None:
+            return v.max_velocity_ms
         return MAX_VELOCITY_MS
 
     # -------------------------------------------------------------------------

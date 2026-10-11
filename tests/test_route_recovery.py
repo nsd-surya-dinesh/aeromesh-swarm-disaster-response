@@ -162,7 +162,9 @@ class TestRouteRecovery:
         np.random.seed(42)
         state = make_state()
         # Linear chain: 0 -> 1 -> -1 (no alternative branch)
-        state.uavs[0] = UAV(id=0, position=Vector3D(300, 0, 50))
+        # Note: diamond topology (setup_diamond_network) allows direct GCS link at close spacing;
+        # graceful drop only applies when no path exists — this setup creates that condition
+        state.uavs[0] = UAV(id=0, position=Vector3D(800, 0, 50))
         state.uavs[1] = UAV(id=1, position=Vector3D(150, 0, 50))
 
         router = MeshRouter(state)
