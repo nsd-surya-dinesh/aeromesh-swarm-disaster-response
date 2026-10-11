@@ -2,12 +2,11 @@
 
 <div align="center">
 
-[![Tests](https://img.shields.io/badge/tests-19%2F19%20passing-brightgreen)](tests/)
-[![Python](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org/)
-
-[![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)]()
-[![PDR](https://img.shields.io/badge/PDR-100%25-brightgreen)]()
-[![Competition](https://img.shields.io/badge/stage-1%20completed-lightgrey)]()
+[![Tests](https://img.shields.io/badge/tests-19%2F19%20interference%20%28PASS%29-brightgreen)](tests/test_interference.py)
+[![Python](https://img.shields.io/badge/python-3.12-blue)](https://www.python.org/)
+[![Route%20Recovery](https://img.shields.io/badge/route%20recovery-8%2F10%20%28PASS%2C%202%20topology%20notes%29-yellow)](tests/test_route_recovery.py)
+[![Stage](https://img.shields.io/badge/stage-2%20in%20progress-orange)]()
+[![Safety](https://img.shields.io/badge/default%20never%20arms-red)]()
 
 **Communication-aware, decentralized multi-UAV swarm framework for autonomous post-disaster reconnaissance and resilient aerial mesh networking**
 
@@ -32,16 +31,18 @@
 
 ## ✨ Key Features
 
-| Feature | Description |
-|---------|-------------|
-| **🤝 Decentralized Task Allocation** | Consensus-Based Bundle Algorithm (CBBA) with energy-aware marginal scoring |
-| **📡 Dynamic Multi-Hop Routing** | ETX-weighted Dijkstra routing over probabilistic LoS wireless channels |
-| **🔧 Steiner Relay Placement** | Automatic relay UAV positioning using Euclidean Steiner points + Artificial Potential Fields |
-| **🔄 Self-Healing Network** | Autonomous relay handoff and topology reconfiguration on hardware failures (<2.1s recovery) |
-| **🔋 Battery Management** | Smart Return-to-Base (RTB) thresholds with seamless GCS recharging cycles |
-| **⚡ Dynamic Event Injection** | Real-time emergency PoI insertion, secondary hazards, and RF jamming simulation |
-| **📊 Interactive Visualization** | 60FPS Pygame GUI + Web dashboard + automated video/GIF recording |
-| **✅ Comprehensive Testing** | 19/19 unit & integration tests with 100% scenario coverage |
+| Feature | Status | Description |
+|---------|--------|-------------|
+| **🤝 Decentralized Task Allocation (CBBA)** | Implemented + tested | Energy-aware marginal scoring; priorities configurable |
+| **📡 Dynamic Multi-Hop Routing (ETX)** | Implemented + tested | Dijkstra over probabilistic LoS; 19/19 interference tests pass |
+| **🔧 Relay Placement** | Partial (midpoint) | `steiner_relay.py` uses Euclidean midpoint + APF — NOT true Steiner-tree |
+| **🔄 Self-Healing Network** | Partial | Mid-path reroute (`mesh_router` loop prevention + TTL + retry); recovery time NOT measured with monotonic clock; mechanism verified by `test_route_recovery.py` (8/10) |
+| **🔋 Battery / RTB** | Simulated | `MissionState` tracks battery; physical verification NONE |
+| **⚡ Dynamic Event Injection** | Implemented + tested | RF jamming spheres (3D), PoI insertion, hazards (B2 documented limit) |
+| **🛡️ Safety / Geofence / Collision** | Tracked (sim) | `MissionState` tracks violations/separation; physical verification NONE |
+| **📊 Visualization** | Implemented | Pygame GUI + web dashboard (Stage 1); Stage 2 adapters documented |
+| **🔒 Real-Time Integration (Phase 0–2)** | Implemented (sim) | `core/autopilot_interface/`: adapter + mock + command gateway + audit; SITL Phase 3 planned; NO ROS2 / PX4 / Gazebo verified |
+| **✅ Testing** | Verified | 19 interference + 10 route-recovery (8 pass, 2 topology notes); adapter files compile; mock never arms |
 
 ---
 
@@ -101,7 +102,7 @@ python run_simulation.py --scenario 3 --gui
 
 ## 📊 Benchmark Results
 
-### Stage 1 Verification Summary
+### Stage 1 Verification Summary (COMPLETED — preserved unchanged)
 
 | Metric | S1: Baseline | S2: Canyon | S3: Fault | S4: Endurance |
 |--------|--------------|------------|-----------|---------------|
@@ -109,17 +110,28 @@ python run_simulation.py --scenario 3 --gui
 | **Packet Delivery Ratio (%)** | 100.0 | 100.0 | 100.0 | 100.0 |
 | **Avg End-to-End Latency (ms)** | 141.5 | 495.8 | 104.2 | 135.6 |
 | **PoIs Surveyed** | 10 / 10 | 8 / 8 | 8 / 8 | 16 / 16 |
-| **Mission Duration (seconds)** | 233.0 | 256.9 | 167.6 | 301.9 |
-| **Survey Rate (PoI / min)** | 2.6 | 1.9 | 2.9 | 3.2 |
-| **Swarm Survival Rate (%)** | 100.0 | 100.0 | 100.0 | 100.0 |
+| **Mission Duration (s)** | 233.0 | 256.9 | 167.6 | 301.9 |
 
-### Key Achievements
+> **Note**: These are simulation-only results from Stage 1. Physical hardware flight, SITL command transmission, and live ROS 2 / PX4 / Gazebo integration have NOT been verified.
 
-✅ **100% Coverage** - All Points of Interest successfully surveyed across all scenarios  
-✅ **100% Packet Delivery** - Zero packet loss with multi-hop mesh routing  
-✅ **100% Swarm Survival** - Zero UAV battery exhaustion crashes  
-✅ **Self-Healing Verified** - Autonomous relay replacement within 2.1 seconds of failure  
-✅ **Multi-Hop Resilience** - Maintained connectivity through 3-hop relay chains (282ms latency)  
+### Stage 2 — Resilience Engineering & Real-Time Readiness (IN PROGRESS — 2026-10-11)
+
+| Area | Status | Evidence |
+|------|--------|----------|
+| RF interference model | Implemented + tested | `tests/test_interference.py`: 19/19 PASS; mechanism in `comm/channel.py`; `swarm/dynamic_events.py` (3D spherical proximity) |
+| Route recovery (reroute/TTL/retry/dup) | Implemented + 8/10 pass | `tests/test_route_recovery.py`; `mesh_router` stats (`reroute_attempts`, `successful_recoveries`, `ttl_drops`, `recovery_latencies`) |
+| Adapter interface + mock adapter | Implemented | `core/autopilot_interface/` (6 files); `MockAutopilotAdapter` never arms / never sends |
+| Command validation gateway | Implemented (design verified) | `core/autopilot_interface/command_validation.py`: 10 gates (`RejectionReason`); `docs/COMMAND_SAFETY.md` |
+| Prioritization / emergency PoI | Partial | `CBBATaskAllocator` uses priority; automated concurrent injection + failure stress not systematically executed |
+| Recovery time measurement | Planned (Phase 5) | `time.monotonic()` design in `REALTIME_PERFORMANCE.md`; not instrumented in sim loop |
+| Secondary hazard → planner | Documented limitation | `B2_SECONDARY_HAZARDS.md`; no integration into `PathPlanner` (not faked) |
+| SITL telemetry-only / preview | Planned (Phase 3) | `SITL_VALIDATION.md` defines 6 levels; adapter exists but no verified PX4/ArduPilot connection |
+
+### Key Achievements — Stage 1 (verified); Stage 2 (implemented / planned as listed above)
+
+> ✅ **Implemented & tested**: Communication resilience (interference + routing), adapter interface, command gateway, audit framework  
+> ⚠️ **Partial / planned**: Recovery time measurement, heartbeat verification, priority-weighted score, SITL integration, hazard planner integration  
+> ❌ **Not verified / not performed**: Physical UAV flight, ROS 2 / Gazebo / PX4 SITL command transmission, hardware-in-the-loop, live PDR measurement  
 
 ---
 
@@ -259,17 +271,24 @@ python -m pytest tests/ --cov=. --cov-report=html
 - 100% benchmark verification
 - Comprehensive testing suite
 
-### 🔄 Stage 2: ROS 2 Integration (PLANNED - Q4 2026)
-- ROS 2 Humble/Iron integration
-- PX4 SITL (Software-In-The-Loop) with Gazebo
-- MAVLink protocol implementation
-- Multi-robot coordination with ROS 2 DDS
+### Roadmap (verified status — 2026-10-11)
 
-### 🔄 Stage 3: Hardware Deployment (PLANNED - Q1 2027)
-- Pixhawk 6C flight controller
-- NVIDIA Jetson Orin Nano companion computer
-- 802.11s mesh networking hardware
-- Field testing with physical UAV fleet
+- ✅ **Stage 1 — Completed** (September 2026): Simulation framework; 19/19 interference tests; 8/10 route-recovery; benchmark scenarios S1–S4 preserved.
+- 🔄 **Stage 2 — In progress** (this release, `v0.2.0-stage2` proposed):
+  - Phase 0: Audit (`REALTIME_READINESS_AUDIT.md`) ✓
+  - Phase 1: Hardware-independent architecture (6 components) ✓
+  - Phase 2: Adapter interface (`core/autopilot_interface/`) + Mock adapter ✓
+  - Phase 3: SITL telemetry-only — planned (PX4 or ArduPilot to select after inspection; default mode never arms)
+  - Phase 4: Command validation gateway (`COMMAND_SAFETY.md`) ✓
+  - Phase 5: Real-time performance — planned (`time.monotonic()` design in `REALTIME_PERFORMANCE.md`)
+  - Phase 6: Multi-UAV stress — planned
+  - Phase 7: Fault handling / authority — planned
+  - Phase 8: HITL checklist (`HARDWARE_TEST_CHECKLIST.md`) ✓
+  - Phase 9: Documentation (7 artifacts + changelog) ✓
+  - Phase 10: Acceptance gates (`SITL_VALIDATION.md`) — defined (Level 1–6)
+- ⚪ **Stage 3 — Not started** (planned Q1 2027): Hardware deployment (Pixhawk / Jetson / 802.11s) — requires verified SITL + HITL + supervised flight.
+
+> **Important**: ROS 2 / PX4 SITL / Gazebo are listed as planned for Stage 2/3. No verified connection, command transmission, or live integration has been performed. See `docs/SITL_VALIDATION.md` for the staged gate approach; default mode must never arm or take off.
 
 ---
 
@@ -298,21 +317,28 @@ python -m pytest tests/ -v
 
 ---
 
-## ⚠️ Technical Trade-offs & Limitations
+## ⚠️ Technical Trade-offs & Known Limitations (verified — 2026-10-11)
 
-In the spirit of engineering transparency and realistic hardware transition planning, the following trade-offs and operational boundaries are characterized:
+In the spirit of engineering transparency and realistic hardware transition planning:
 
-1. **Multi-Hop Latency Scaling in Extreme Topography**:
-   - In deep canyon / NLOS scenarios (Scenario 2), end-to-end packet latency scales from a baseline of ~101.7 ms to 282.2 ms over 3-hop relay chains due to cumulative store-and-forward ETX queue delays.
-   - *Mitigation*: Adaptive queue prioritization guarantees immediate forwarding of high-priority survivor telemetry over standard periodic heartbeats.
+1. **Multi-Hop Latency Scaling (Stage 1)** — Deep-canyon / NLOS latency scales ~101→282 ms over 3-hop relay chains (simulated, `results/`). Not a physical measurement.
+2. **Relay Energy Dissipation** — Steiner-point relay hover consumes ~15–20% more power vs cruising scouts (simulated aerodynamic model; physical flight not verified).
+3. **CBBA Overhead (simulated)** — Dense swarms (N>25) show ~0.8–1.4 s initial message burst (simulated; no live DDS test performed).
+4. **Secondary Hazards — Documented Limitation (B2)** — `inject_secondary_hazard()` creates zones; `PathPlanner` does NOT check them; allocator does NOT exclude PoIs inside zones. Per Stage 2 mandate: documented, not faked (`B2_SECONDARY_HAZARDS.md` + `KNOWN_LIMITATIONS.md`).
+5. **Coordinate System Consistency** — Hazard zones use 3D spherical geometry; planner uses 2D + hard geofence. Alignment needed for Stage 3 (documented in `REALTIME_READINESS_AUDIT.md`).
+6. **Recovery Time Measurement — Not Yet Instrumented** — `MeshRouter` tracks `recovery_latencies`; `time.monotonic()` design exists (`REALTIME_PERFORMANCE.md`); simulation loop does not record per-event recovery time. Phase 5 planned.
+7. **No Physical Flight / SITL Command Transmission Verified** — Default never arms. `MockAutopilotAdapter` never sends. `SimulatorAdapter` reads sim only. `SITL_VALIDATION.md` defines 6-level gate (Level 4 requires explicit `SITL_COMMAND_MODE_ENABLED`); not yet executed with PX4/ArduPilot.
 
-2. **Station-Keeping Aerodynamic Energy Dissipation**:
-   - UAVs assigned as Steiner relays consume ~15–20% more power during stationary hover under adverse crosswinds (>7 m/s) compared to cruising scouts operating at optimal aerodynamic lift velocity ($v_{\text{cruise}} = 12\text{ m/s}$).
-   - *Mitigation*: The `HealthMonitor` module accounts for dynamic wind speed in the RTB threshold calculation ($E_{\text{safe}}$) and proactively dispatches replacement relays before battery drop below safe limits.
+## 🛡️ Safety Constraints (hard requirements — verified in code and docs)
 
-3. **CBBA Auction Convergence Overhead in Dense Swarms**:
-   - For swarms exceeding $N > 25$ agents, decentralized consensus bundling introduces an initial 0.8–1.4 second message propagation burst across the mesh.
-   - *Mitigation*: Sub-swarm spatial clustering is planned for Stage 2 to bound consensus latency within localized geographical sectors.
+- Default mode **never arms**, never initiates takeoff, never executes a physical mission.
+- `CommandValidationSafetyLayer` rejects unsafe setpoints with explicit `RejectionReason` + timestamp; **no silent clamping**.
+- `MockAutopilotAdapter` is deterministic; never sends motor/actuator commands; requires `authorization_token` for mode changes.
+- Mesh routing failure must not disable local vehicle stabilization or prevent autopilot failsafes (documented in `AUTOPILOT_INTEGRATION.md`, `COMMAND_SAFETY.md`).
+- Secondary hazard integration not faked; documented as architectural gap.
+- No credentials / secrets / private keys exposed.
+
+---
 
 ---
 
