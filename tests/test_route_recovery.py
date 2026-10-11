@@ -30,7 +30,7 @@ def setup_diamond_network():
     """
     Sets up a diamond topology:
             UAV 1 (100, 50, 50)
-          /                     \\
+          /                     \
     UAV 0 (0, 50, 50)           GCS (-1 at 0, 0, 0)
           \\                     /
             UAV 2 (100, -50, 50)
@@ -163,7 +163,7 @@ class TestRouteRecovery:
         state = make_state()
         # Linear chain: 0 -> 1 -> -1 (no alternative branch)
         # Note: diamond topology (setup_diamond_network) allows direct GCS link at close spacing;
-        # graceful drop only applies when no path exists — this setup creates that condition
+        # graceful drop only applies when no path exists - this setup creates that condition
         state.uavs[0] = UAV(id=0, position=Vector3D(800, 0, 50))
         state.uavs[1] = UAV(id=1, position=Vector3D(150, 0, 50))
 
@@ -178,6 +178,12 @@ class TestRouteRecovery:
         router.link_quality_cache[(0, 1)]['is_connected'] = False
         if router.network_graph.has_edge(0, 1):
             router.network_graph.remove_edge(0, 1)
+
+        # Also break the direct GCS link that exists even at 800m distance
+        # (RF model keeps direct link connected; must explicitly remove it)
+        if router.network_graph.has_edge(0, -1):
+            router.network_graph.remove_edge(0, -1)
+        router.link_quality_cache[(0, -1)]['is_connected'] = False
 
         # Process forwarding: reroute fails because no path exists
         router.process_packet_forwarding(0.1)
