@@ -75,7 +75,8 @@ class SimulatorAdapter(MockAutopilotAdapter):
                     uav.velocity.z if hasattr(uav.velocity, 'z') else float(uav.velocity.z or 0),
                 ),
                 'battery_remaining': uav.battery_level,
-                'flight_mode': FlightMode(uav.state.value if hasattr(uav.state, 'value') else uav.state),
+                # Use UNKNOWN as default; UAVState is not FlightMode
+                'flight_mode': FlightMode.UNKNOWN,
                 'armed': False,  # Simulation default: never armed
                 'health': VehicleHealth.HEALTHY if uav.is_operational() else VehicleHealth.DEGRADED,
                 'rssi': -70.0,

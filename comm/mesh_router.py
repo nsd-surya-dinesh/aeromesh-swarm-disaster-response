@@ -15,10 +15,13 @@ from comm.channel import RFChannel
 class MeshRouter:
     """Dynamic multi-hop routing engine for UAV mesh network"""
 
-    def __init__(self, mission_state: MissionState):
+    def __init__(self, mission_state: MissionState, event_manager=None):
         self.mission_state = mission_state
         self.rf_channel = RFChannel()
         self.cfg_rf = config.rf
+        # Optional DynamicEventManager; when set, active RF interference zones
+        # degrade link SNR during topology evaluation (see comm/channel.py).
+        self.event_manager = event_manager
 
         # Routing tables: {node_id: {dest_id: (next_hop_id, etx_cost)}}
         self.routing_table: Dict[int, Dict[int, Tuple[int, float]]] = defaultdict(dict)
@@ -37,6 +40,13 @@ class MeshRouter:
         self.packets_delivered = 0
         self.packets_dropped = 0
         self.total_hops = 0
+
+        # Resilience and recovery statistics
+        self.reroute_attempts = 0
+        self.successful_recoveries = 0
+        self.ttl_drops = 0
+        self.recovery_latencies: List[float] = []
+        self.delivered_packet_ids: Set[int] = set()
 
         self.last_routing_update = 0.0
 
@@ -69,7 +79,8 @@ class MeshRouter:
                 pos_a = self._get_node_position(node_a)
                 pos_b = self._get_node_position(node_b)
 
-                link_quality = self.rf_channel.calculate_link_quality(pos_a, pos_b)
+                link_quality = self.rf_channel.calculate_link_quality(
+                    pos_a, pos_b, interference_event=self.event_manager)
 
                 if link_quality['is_connected']:
                     etx = link_quality['etx']
@@ -173,47 +184,114 @@ class MeshRouter:
 
     def process_packet_forwarding(self, dt: float):
         """
-        Processes packet forwarding across all hops.
-        Simulates transmission delay and probabilistic packet drops based on PDR.
+        Processes packet forwarding across all hops with robust mid-path rerouting.
+        If the selected next hop is no longer usable, attempts to recompute
+        a loop-free alternative route from the current node. Respects packet TTL,
+        prevents duplicate delivery, and tracks recovery metrics.
         """
         current_time = self.mission_state.time
 
-        # Process each UAV's outgoing queue
-        for uav_id in list(self.packet_queues.keys()):
-            if not self.packet_queues[uav_id]:
+        # Process each node's outgoing queue
+        for node_id in list(self.packet_queues.keys()):
+            if not self.packet_queues[node_id]:
                 continue
 
-            packet = self.packet_queues[uav_id].popleft()
+            packet = self.packet_queues[node_id].popleft()
 
-            # Check if at destination
-            if packet.current_hop >= len(packet.path) - 1:
+            # Prevent duplicate delivery
+            if packet.packet_id in self.delivered_packet_ids:
+                continue
+
+            # Check packet TTL / hop limit
+            if packet.ttl <= 0 or packet.current_hop >= self.cfg_rf.max_hops:
+                self.packets_dropped += 1
+                self.ttl_drops += 1
+                continue
+
+            # Check if already at destination
+            if packet.current_hop >= len(packet.path) - 1 or (packet.path and packet.path[packet.current_hop] == packet.dest_id):
                 self._deliver_packet(packet)
                 continue
 
             current_node = packet.path[packet.current_hop]
             next_node = packet.path[packet.current_hop + 1]
 
-            # Check link quality
-            link_key = (current_node, next_node)
-            if link_key not in self.link_quality_cache:
-                # Link broken
-                self.packets_dropped += 1
-                continue
+            # Verify that the next hop node is operational if it's a UAV
+            next_node_operational = True
+            if next_node >= 0:
+                next_uav = self.mission_state.uavs.get(next_node)
+                if next_uav is None or not next_uav.is_operational():
+                    next_node_operational = False
 
+            # Check link quality of the planned next hop
+            link_key = (current_node, next_node)
+            link_is_connected = False
+            if next_node_operational and link_key in self.link_quality_cache:
+                link_is_connected = self.link_quality_cache[link_key].get('is_connected', False)
+
+            # If link is broken or next node failed: attempt mid-path reroute
+            if not link_is_connected:
+                self.reroute_attempts += 1
+                visited = set(packet.path[:packet.current_hop + 1])
+                alt_path = self._find_alternative_path(
+                    current_node, packet.dest_id,
+                    broken_edge=(current_node, next_node),
+                    visited_nodes=visited
+                )
+
+                if alt_path and len(alt_path) > 1:
+                    # Successfully found alternative route
+                    packet.path = packet.path[:packet.current_hop] + alt_path
+                    packet.reroute_count += 1
+                    packet.ttl -= 1
+                    self.successful_recoveries += 1
+                    # Re-queue at current node for immediate processing on alternative path
+                    self.packet_queues[current_node].append(packet)
+                    continue
+                else:
+                    # Destination unreachable through alternative route
+                    self.packets_dropped += 1
+                    continue
+
+            # Link is connected: check probabilistic packet drop based on PDR
             link_quality = self.link_quality_cache[link_key]
             pdr = link_quality['pdr']
 
-            # Probabilistic packet drop
             import random
             if random.random() > pdr:
-                self.packets_dropped += 1
-                continue
+                # Transmission failed on this attempt
+                if packet.retry_count < packet.max_retries:
+                    packet.retry_count += 1
+                    # Re-queue for retransmission
+                    self.packet_queues[current_node].append(packet)
+                    continue
+                else:
+                    # Retries exhausted: try alternative route before dropping
+                    self.reroute_attempts += 1
+                    visited = set(packet.path[:packet.current_hop + 1])
+                    alt_path = self._find_alternative_path(
+                        current_node, packet.dest_id,
+                        broken_edge=(current_node, next_node),
+                        visited_nodes=visited
+                    )
+                    if alt_path and len(alt_path) > 1:
+                        packet.path = packet.path[:packet.current_hop] + alt_path
+                        packet.reroute_count += 1
+                        packet.retry_count = 0
+                        packet.ttl -= 1
+                        self.successful_recoveries += 1
+                        self.packet_queues[current_node].append(packet)
+                        continue
+                    else:
+                        self.packets_dropped += 1
+                        continue
 
-            # Successful transmission - advance to next hop
+            # Successful transmission over this hop
             packet.advance_hop()
+            packet.ttl -= 1
             self.total_hops += 1
 
-            if packet.current_hop >= len(packet.path) - 1:
+            if packet.current_hop >= len(packet.path) - 1 or packet.path[packet.current_hop] == packet.dest_id:
                 # Reached destination
                 self._deliver_packet(packet)
             else:
@@ -221,8 +299,15 @@ class MeshRouter:
                 self.packet_queues[next_node].append(packet)
 
     def _deliver_packet(self, packet: Packet):
-        """Delivers packet to final destination"""
+        """Delivers packet to final destination, preventing duplicate delivery"""
+        if packet.packet_id in self.delivered_packet_ids:
+            return  # Prevent duplicate delivery
+        self.delivered_packet_ids.add(packet.packet_id)
         self.packets_delivered += 1
+
+        if packet.reroute_count > 0:
+            rec_lat = self.mission_state.time - packet.creation_time
+            self.recovery_latencies.append(rec_lat)
 
         if packet.dest_id == -1:
             # Delivered to GCS
@@ -244,6 +329,37 @@ class MeshRouter:
         except (nx.NetworkXNoPath, nx.NodeNotFound):
             return None
 
+    def _find_alternative_path(self, source_id: int, dest_id: int,
+                               broken_edge: Optional[Tuple[int, int]] = None,
+                               visited_nodes: Optional[Set[int]] = None) -> Optional[List[int]]:
+        """
+        Finds shortest alternative path excluding the broken edge and avoiding loops.
+        """
+        if source_id not in self.network_graph or dest_id not in self.network_graph:
+            return None
+
+        try:
+            H = self.network_graph.copy()
+            if broken_edge:
+                u, v = broken_edge
+                if H.has_edge(u, v):
+                    H.remove_edge(u, v)
+                if H.has_edge(v, u):
+                    H.remove_edge(v, u)
+
+            # Prevent loops: remove already-visited intermediate nodes
+            if visited_nodes:
+                for node in visited_nodes:
+                    if node != source_id and node != dest_id and H.has_node(node):
+                        H.remove_node(node)
+
+            path = nx.shortest_path(H, source_id, dest_id, weight='weight')
+            if len(path) > self.cfg_rf.max_hops:
+                return None
+            return path
+        except (nx.NetworkXNoPath, nx.NodeNotFound):
+            return None
+
     def _get_node_position(self, node_id: int) -> Vector3D:
         """Gets position of a node (UAV or GCS)"""
         if node_id == -1:
@@ -254,6 +370,24 @@ class MeshRouter:
     def get_network_stats(self) -> Dict:
         """Returns network performance statistics"""
         pdr_overall = self.packets_delivered / max(1, self.packets_sent)
+        avg_latency = self.mission_state.gcs.total_latency / max(1, self.mission_state.gcs.packets_received)
+        avg_hops = self.total_hops / max(1, self.packets_delivered)
+        avg_rec_lat = (sum(self.recovery_latencies) / len(self.recovery_latencies)) if self.recovery_latencies else 0.0
+
+        return {
+            'packets_sent': self.packets_sent,
+            'packets_delivered': self.packets_delivered,
+            'packets_dropped': self.packets_dropped,
+            'reroute_attempts': self.reroute_attempts,
+            'successful_recoveries': self.successful_recoveries,
+            'ttl_drops': self.ttl_drops,
+            'avg_recovery_latency': avg_rec_lat,
+            'pdr': pdr_overall,
+            'avg_latency': avg_latency,
+            'avg_hops': avg_hops,
+            'num_nodes': self.network_graph.number_of_nodes(),
+            'num_edges': self.network_graph.number_of_edges()
+        }
         avg_latency = self.mission_state.gcs.total_latency / max(1, self.mission_state.gcs.packets_received)
         avg_hops = self.total_hops / max(1, self.packets_delivered)
 

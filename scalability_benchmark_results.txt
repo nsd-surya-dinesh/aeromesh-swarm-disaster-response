@@ -2,60 +2,60 @@ AeroMesh-Swarm Scalability Benchmark Results
 ==================================================
 
 UAV Count: 5
-  Runtime: 0.39 s
+  Runtime: 0.36 s
   Coverage: 100.0%
   PDR: 100.0%
-  Avg Latency: 124.0 ms
-  Packets Sent: 583
-  Packets Delivered: 583
+  Avg Latency: 176.3 ms
+  Packets Sent: 569
+  Packets Delivered: 569
   Packets Dropped: 0
-  Avg Hops: 1.1
+  Avg Hops: 1.2
   CBBA Iterations: 1
   PoIs Surveyed: 10/10
 
 UAV Count: 10
-  Runtime: 0.73 s
+  Runtime: 0.71 s
   Coverage: 100.0%
   PDR: 100.0%
-  Avg Latency: 128.8 ms
-  Packets Sent: 562
-  Packets Delivered: 562
+  Avg Latency: 196.5 ms
+  Packets Sent: 568
+  Packets Delivered: 568
   Packets Dropped: 0
-  Avg Hops: 1.1
-  CBBA Iterations: 1
+  Avg Hops: 1.2
+  CBBA Iterations: 5
   PoIs Surveyed: 10/10
 
 UAV Count: 15
-  Runtime: 1.22 s
+  Runtime: 1.17 s
   Coverage: 100.0%
   PDR: 100.0%
-  Avg Latency: 128.7 ms
-  Packets Sent: 567
-  Packets Delivered: 567
+  Avg Latency: 149.6 ms
+  Packets Sent: 564
+  Packets Delivered: 564
   Packets Dropped: 0
-  Avg Hops: 1.1
+  Avg Hops: 1.2
   CBBA Iterations: 1
   PoIs Surveyed: 10/10
 
 UAV Count: 20
-  Runtime: 8.50 s
+  Runtime: 8.21 s
   Coverage: 100.0%
   PDR: 100.0%
-  Avg Latency: 130.6 ms
-  Packets Sent: 576
-  Packets Delivered: 576
+  Avg Latency: 125.6 ms
+  Packets Sent: 555
+  Packets Delivered: 555
   Packets Dropped: 0
   Avg Hops: 1.1
   CBBA Iterations: 1
   PoIs Surveyed: 10/10
 
 UAV Count: 25
-  Runtime: 13.20 s
+  Runtime: 14.97 s
   Coverage: 100.0%
   PDR: 100.0%
-  Avg Latency: 154.2 ms
-  Packets Sent: 563
-  Packets Delivered: 563
+  Avg Latency: 137.2 ms
+  Packets Sent: 562
+  Packets Delivered: 562
   Packets Dropped: 0
   Avg Hops: 1.2
   CBBA Iterations: 1

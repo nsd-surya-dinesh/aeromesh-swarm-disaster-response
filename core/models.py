@@ -159,6 +159,10 @@ class Packet:
     # Routing
     path: List[int] = field(default_factory=list)  # List of node IDs in route
     current_hop: int = 0
+    ttl: int = 15  # Time-to-live / hop limit
+    retry_count: int = 0
+    max_retries: int = 3
+    reroute_count: int = 0
 
     # Timing
     creation_time: float = 0.0
