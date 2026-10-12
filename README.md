@@ -416,3 +416,11 @@ If you use **AeroMesh-Swarm** in your research or project, please cite:
 [⬆ Back to Top](#-aeromesh-swarm-resilient-multi-hop-uav-swarm-for-disaster-response)
 
 </div>
+---
+
+## Stage 2 Updates (added)
+- 10-PoI swap algorithm (swarm/swap_10_poi.py): dual mission + network decision
+- Relay-aware RTB (swarm/relay_aware_rtb.py): dependency-check before relay leaves
+- AI automation layer (core/ai_layer/automation.py): priority updates, validation
+- Stage 3 hardware map (docs/STAGE3_HARDWARE_MAP.md): 2-drone build, budget, ROS2 nodes
+- Cleaned corrupt artifacts; 38 tests preserved
