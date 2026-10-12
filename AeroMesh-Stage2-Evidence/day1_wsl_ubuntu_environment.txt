@@ -1,0 +1,11 @@
+AEROMESH STAGE 2 — DAY 1 WSL/UBUNTU ENVIRONMENT (2026-10-11)
+Status: NOT STARTED — WSL2 installation not verified; Ubuntu 22.04 not confirmed
+WSL status: NOT RUN (wsl --status / wsl --list --verbose not executed — PowerShell commands blocked intermittently)
+Distribution: Unknown — no evidence of Ubuntu 22.04 installation found
+Kernel (uname -r): NOT RUN (requires Ubuntu shell)
+Memory (free -h): NOT RUN
+Filesystem (df -h /): NOT RUN
+Cat /etc/os-release: NOT RUN
+Error: None recorded — command not executed, not failed
+Note: No installation attempted. No upgrade performed. User approval required before any WSL/Ubuntu installation.
+Recommendation: If WSL2 is needed for PX4 SITL, confirm with user before installing. Current simulation work runs natively under Windows Python 3.12.7.

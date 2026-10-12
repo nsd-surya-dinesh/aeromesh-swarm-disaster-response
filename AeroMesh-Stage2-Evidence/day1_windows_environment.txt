@@ -1,0 +1,13 @@
+AEROMESH STAGE 2 — DAY 1 WINDOWS ENVIRONMENT (2026-10-11)
+Status: PARTIALLY VERIFIED — Windows details from system context; PowerShell commands not executed (classifier intermittent)
+Windows edition: Windows 11 Home Single Language
+Windows version: 10.0.26300
+CPU: Intel i5-1235U
+Physical RAM: 16 GB
+Storage: ~477 GB total (available not measured via PowerShell — tool blocked intermittently)
+Git version: not measured via PowerShell (repo present at stage-2-development / 30bb8c2)
+Python: 3.12.7 (from pytest header: Python 3.12.7 installed; py --version not executed)
+Python launcher: present (pytest runs successfully)
+Collection method: System context + pytest execution output; PowerShell Get-ComputerInfo not executed due to intermittent tool availability
+Date/time of collection: 2026-10-11
+Note: No destructive changes made. No installations performed. All measurements from verified sources only.
