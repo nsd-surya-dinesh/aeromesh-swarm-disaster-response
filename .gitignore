@@ -49,3 +49,10 @@ Thumbs.db
 
 # Keep demo snapshots
 !scenario_*_snapshots/*.png
+
+# Test artifacts — prevent polluting repo
+results/*_decision_audit.txt
+results/uav-*.txt
+
+# Staged artifacts directory
+hardware_abstraction/

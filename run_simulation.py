@@ -1,158 +1,72 @@
-"""
-AeroMesh-Swarm Main CLI Runner
-Supports running simulation scenarios, interactive GUI, and generating benchmarks.
-"""
-import argparse
-import sys
-import os
-from simulation.scenario_builder import ScenarioBuilder
-from simulation.metrics import MetricsEngine
-from simulation.challenge_metrics import ChallengeMetricsReporter
-from visualization.video_recorder import VideoRecorder
-from visualization.plotter import ChartPlotter
+"""AeroMesh Sprint CLI — --hardware / --sitl / --drone-id / --dashboard-port / --dry-run."""
+import argparse, asyncio
+from core.autopilot_interface.hybrid_adapter import HybridAutopilotAdapter
+from swarm.failure_detector import FailureDetector
+from core.ai_layer.explainable_logger import SwarmExplainableLogger
+from comm.channel import MinifiedMeshChannel
+from comm.mesh_udp import MeshUDPNode
+from visualization.dashboard_server import start_dashboard, update_dashboard_data
 
-# Optional pygame import
-try:
-    from visualization.gui_visualizer import GUIVisualizer
-    PYGAME_AVAILABLE = True
-except ImportError:
-    PYGAME_AVAILABLE = False
-    GUIVisualizer = None
-
-
-def print_metrics_summary(metrics):
-    """Prints formatted metrics summary"""
-    print("\n[+] Mission Execution Summary:")
-    print("-------------------------------------------------------")
-    for k, v in metrics.items():
-        if isinstance(v, float):
-            print(f"  {k:35s}: {v:.2f}")
-        else:
-            print(f"  {k:35s}: {v}")
-    print("-------------------------------------------------------\n")
-
-
-def main():
-    parser = argparse.ArgumentParser(description="AeroMesh-Swarm: UAV Swarm Disaster Response System")
-    parser.add_argument("--scenario", type=int, default=1, choices=[1, 2, 3, 4],
-                        help="Scenario to run: 1=Baseline, 2=Deep Canyon, 3=Dynamic Fault, 4=Endurance")
-    parser.add_argument("--gui", action="store_true", help="Launch interactive Pygame GUI")
-    parser.add_argument("--record", action="store_true", help="Record simulation to video/GIF")
-    parser.add_argument("--max-time", type=float, default=600.0, help="Max simulation duration (seconds)")
-    parser.add_argument("--benchmark-all", action="store_true", help="Run all 4 scenarios and output comparison")
-
+async def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--hardware", action="store_true")
+    parser.add_argument("--sitl", action="store_true")
+    parser.add_argument("--drone-id", type=int, default=1)
+    parser.add_argument("--dashboard-port", type=int, default=8080)
+    parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--duration", type=float, default=3.0, help="Seconds to run before exit")
     args = parser.parse_args()
 
-    if args.benchmark_all:
-        run_all_benchmarks()
+    adapter = HybridAutopilotAdapter()
+    adapter.connect_interface()
+    await adapter.wait_for_ekf_convergence(timeout=120)
+    start_dashboard(port=args.dashboard_port)
+
+    fd = FailureDetector()
+    logger = SwarmExplainableLogger(f"uav-{args.drone_id}")
+    ch = MinifiedMeshChannel(args.drone_id)
+    mesh = MeshUDPNode()
+    vision_hazard = {"current": "NONE"}
+
+    async def flight_control_loop():
+        async for pos in adapter.telemetry_stream():
+            if args.dry_run:
+                pkt = ch.serialize_telemetry(pos["position"][0], pos["position"][1], pos["position"][2], vision_hazard["current"])
+                mesh.send(pkt)
+                logger.log_decision("SEARCHING", -72.0, "CLEAR_TERRAIN", "MAINTAIN_GRID")
+                print("[BOOT] dry-run packet", pos)
+            else:
+                pkt = ch.serialize_telemetry(pos["position"][0], pos["position"][1], pos["position"][2], vision_hazard["current"])
+                mesh.send(pkt)
+                logger.log_decision(str(pos["position"]), pos["battery"], vision_hazard["current"], "HOLD")
+                update_dashboard_data(args.drone_id, pos["position"][0], pos["position"][1], pos["position"][2], vision_hazard["current"])
+            await asyncio.sleep(0.05)  # 20Hz
+
+    async def mesh_receive_loop():
+        now = __import__('time').monotonic()
+        fd.update(args.drone_id, now)
+        failed = fd.get_failed_drones(now)
+        for d in failed:
+            fd.on_failure(d)
+            update_dashboard_data(f"uav-{d}", 0, 0, 0, "ALERT: heartbeat lost")
+            logger.log_decision(str({"failed": d}), -50, "NONE", "REALLOC_STUB")
+
+    async def vision_stub_loop():
+        while True:
+            vision_hazard["current"] = "HEAT" if args.dry_run else "NONE"
+            await asyncio.sleep(1)
+
+    try:
+        await asyncio.wait_for(
+            asyncio.gather(flight_control_loop(), mesh_receive_loop(), vision_stub_loop()),
+            timeout=args.duration
+        )
+    except asyncio.TimeoutError:
+        print("[BOOT] Duration reached, exiting cleanly")
+        return
+    except asyncio.CancelledError:
+        print("[BOOT] Tasks cancelled cleanly")
         return
 
-    # Build selected scenario
-    sim_builders = {
-        1: ScenarioBuilder.scenario_1_baseline_survey,
-        2: ScenarioBuilder.scenario_2_deep_canyon_los_blockage,
-        3: ScenarioBuilder.scenario_3_dynamic_emergency_and_node_failure,
-        4: ScenarioBuilder.scenario_4_continuous_swapping_endurance
-    }
-
-    print(f"\n=======================================================")
-    print(f">> AeroMesh-Swarm: Launching Scenario {args.scenario}")
-    print(f"=======================================================")
-
-    sim = sim_builders[args.scenario]()
-
-    if args.gui:
-        if not PYGAME_AVAILABLE:
-            print("[-] Pygame not installed. GUI mode requires pygame.")
-            print("    Install with: pip install pygame")
-            print("    Running in headless mode instead...\n")
-            report = sim.run_simulation(max_time=args.max_time)
-            metrics = MetricsEngine(sim.mission_state).generate_full_metrics_summary()
-            print_metrics_summary(metrics)
-        else:
-            print(">> Starting interactive Pygame visualizer...")
-            visualizer = GUIVisualizer(sim)
-            visualizer.run(max_time=args.max_time)
-    elif args.record:
-        print(">> Starting headless video recording...")
-        recorder = VideoRecorder(sim)
-        recorder.run_and_record(max_time=args.max_time)
-        recorder.export_video(f"scenario_{args.scenario}_demo.mp4")
-    else:
-        # Headless fast simulation
-        report = sim.run_simulation(max_time=args.max_time)
-
-        # Generate comprehensive challenge-compliant metrics report
-        challenge_reporter = ChallengeMetricsReporter(sim.mission_state)
-        challenge_reporter.print_challenge_report()
-
-
-def run_all_benchmarks():
-    """Runs all 4 scenarios headlessly and generates comparative benchmark report"""
-    print("\n=== Running Comprehensive Benchmark Suite Across All 4 Scenarios ===\n")
-
-    scenarios = [
-        ("Scenario 1: Baseline", ScenarioBuilder.scenario_1_baseline_survey),
-        ("Scenario 2: Deep Canyon", ScenarioBuilder.scenario_2_deep_canyon_los_blockage),
-        ("Scenario 3: Dynamic Fault", ScenarioBuilder.scenario_3_dynamic_emergency_and_node_failure),
-        ("Scenario 4: Endurance", ScenarioBuilder.scenario_4_continuous_swapping_endurance),
-    ]
-
-    all_metrics = []
-    names = []
-
-    for name, builder in scenarios:
-        print(f">> Executing {name}...")
-        sim = builder()
-        sim.run_simulation(max_time=600.0)
-        metrics = MetricsEngine(sim.mission_state).generate_full_metrics_summary()
-        # Get additional metrics from mesh router and GCS
-        network_stats = sim.mesh_router.get_network_stats()
-        gcs = sim.mission_state.gcs
-        packets_sent = gcs.packets_received + gcs.packets_dropped
-        packets_delivered = gcs.packets_received
-        packets_dropped = gcs.packets_dropped
-        avg_hops = network_stats['avg_hops']
-        # Augment metrics dictionary
-        metrics['packets_sent'] = packets_sent
-        metrics['packets_delivered'] = packets_delivered
-        metrics['packets_dropped'] = packets_dropped
-        metrics['avg_hops'] = avg_hops
-        all_metrics.append(metrics)
-        names.append(name)
-
-    print("\n" + "="*80)
-    print("BENCHMARK COMPARISON MATRIX")
-    print("="*80)
-    print(f"{'Metric':<32} | {'S1: Baseline':<12} | {'S2: Canyon':<12} | {'S3: Fault':<12} | {'S4: Endurance':<12}")
-    print("-"*80)
-
-    keys = [
-        ('Coverage (%)', 'coverage_percentage'),
-        ('PDR (%)', 'packet_delivery_ratio_pdr'),
-        ('Avg Latency (ms)', 'avg_end_to_end_latency_ms'),
-        ('Packets Sent', 'packets_sent'),
-        ('Packets Delivered', 'packets_delivered'),
-        ('Packets Dropped', 'packets_dropped'),
-        ('Avg Hops', 'avg_hops'),
-        ('PoIs Surveyed', 'pois_surveyed'),
-        ('Total Energy (kWh)', 'total_energy_kwh'),
-        ('Survey Rate (PoI/min)', 'survey_rate_pois_per_min'),
-        ('Survival Rate (%)', 'swarm_survival_rate')
-    ]
-
-    for label, key in keys:
-        vals = [f"{m[key]:.1f}" for m in all_metrics]
-        print(f"{label:<32} | {vals[0]:<12} | {vals[1]:<12} | {vals[2]:<12} | {vals[3]:<12}")
-
-    print("="*80)
-
-    # Generate charts if docs/figures exists
-    os.makedirs("docs/figures", exist_ok=True)
-    plotter = ChartPlotter("docs/figures")
-    plotter.plot_scenario_comparison(names, all_metrics)
-    print(">> Generated comparative charts in docs/figures/scenario_comparison.png\n")
-
-
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

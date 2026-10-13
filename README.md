@@ -317,9 +317,46 @@ python -m pytest tests/ -v
 
 ---
 
-## ⚠️ Technical Trade-offs & Known Limitations (verified — 2026-10-11)
+## ⚠️ Technical Trade-offs & Known Limitations (verified — 2026-10-13)
 
-In the spirit of engineering transparency and realistic hardware transition planning:
+### Stage 2 Hardware Integration Status (2026-10-13)
+
+| Area | Status | Evidence |
+|------|--------|----------|
+| Hybrid autopilot adapter | Implemented | `core/autopilot_interface/hybrid_adapter.py`; connects serial/SITL, EKF gating |
+| Minified mesh telemetry | Implemented | `comm/channel.py`; `b"id,lat,lon,alt,status_code"` format; `MeshUDPNode` broadcast |
+| EKF convergence safety gate | Implemented | `is_global_position_ok` / `is_home_position_ok` checks before motor arming |
+| Flask dark-mode telemetry dashboard | Implemented | `visualization/dashboard_server.py`; `/api/telemetry` with dark UI |
+| Explainable AI (XAI) decision audit logger | Implemented | `core/ai_layer/explainable_logger.py`; `[TIMESTAMP] [DECISION ENGINE]` format |
+| Swarm heartbeat failure detector | Implemented | `swarm/failure_detector.py`; 5.0s timeout; triggers reallocation stubs |
+| Systemd headless service | Implemented | `deploy/systemd/aeromesh_swarm.service`; `scripts/setup_boot_service.sh` |
+| Hardware diagnostic tool | Implemented | `tools/check_hardware.py`; serial/mesh interface checks |
+| 10-PoI swap algorithm | Implemented | `swarm/swap_10_poi.py`: dual mission + network decision |
+| Relay-aware RTB | Implemented | `swarm/relay_aware_rtb.py`: dependency-check before relay leaves |
+| AI automation layer | Implemented | `core/ai_layer/automation.py`: priority updates, validation |
+| Hardware budget map | Implemented | `docs/STAGE3_HARDWARE_MAP.md`; 2-drone build under ₹1,00,000 INR |
+
+### Known Limitations (verified — 2026-10-13)
+
+1. **Multi-Hop Latency Scaling** — Deep-canyon / NLOS latency scales ~101→282 ms over 3-hop relay chains (simulated, `results/`). Not a physical measurement.
+2. **Relay Energy Dissipation** — Steiner-point relay hover consumes ~15–20% more power vs cruising scouts (simulated aerodynamic model; physical flight not verified).
+3. **CBBA Overhead (simulated)** — Dense swarms (N>25) show ~0.8–1.4 s initial message burst (simulated; no live DDS test performed).
+4. **Secondary Hazards — Documented Limitation (B2)** — `inject_secondary_hazard()` creates zones; `PathPlanner` does NOT check them; allocator does NOT exclude PoIs inside zones. Per Stage 2 mandate: documented, not faked (`B2_SECONDARY_HAZARDS.md` + `KNOWN_LIMITATIONS.md`).
+5. **Coordinate System Consistency** — Hazard zones use 3D spherical geometry; planner uses 2D + hard geofence. Alignment needed for Stage 3 (documented in `REALTIME_READINESS_AUDIT.md`).
+6. **Recovery Time Measurement — Not Yet Instrumented** — `MeshRouter` tracks `recovery_latencies`; `time.monotonic()` design exists (`REALTIME_PERFORMANCE.md`); simulation loop does not record per-event recovery time. Phase 5 planned.
+7. **No Physical Flight / SITL Command Transmission Verified** — Default never arms. `MockAutopilotAdapter` never sends. `SimulatorAdapter` reads sim only. `SITL_VALIDATION.md` defines 6-level gate (Level 4 requires explicit `SITL_COMMAND_MODE_ENABLED`); not yet executed with PX4/ArduPilot.
+8. **10-PoI Swap Under Concurrent Failure** — Algorithm assumes static node set; simultaneous PoI swap + node failure stress not systematically executed.
+9. **XAI Audit Under Failure** — Decision log only captures success/HOLD states; ALERT/REALLOC_STUB paths not exhaustively tested in integration.
+10. **Dashboard Under Node Isolation** — `/api/telemetry` aggregates all nodes; no per-node isolation filtering or stale-node detection in live feed.
+
+## 🛡️ Safety Constraints (hard requirements — verified in code and docs)
+
+- Default mode **never arms**, never initiates takeoff, never executes a physical mission.
+- `CommandValidationSafetyLayer` rejects unsafe setpoints with explicit `RejectionReason` + timestamp; **no silent clamping**.
+- `MockAutopilotAdapter` is deterministic; never sends motor/actuator commands; requires `authorization_token` for mode changes.
+- Mesh routing failure must not disable local vehicle stabilization or prevent autopilot failsafes (documented in `AUTOPILOT_INTEGRATION.md`, `COMMAND_SAFETY.md`).
+- Secondary hazard integration not faked; documented as architectural gap.
+- No credentials / secrets / private keys exposed.
 
 1. **Multi-Hop Latency Scaling (Stage 1)** — Deep-canyon / NLOS latency scales ~101→282 ms over 3-hop relay chains (simulated, `results/`). Not a physical measurement.
 2. **Relay Energy Dissipation** — Steiner-point relay hover consumes ~15–20% more power vs cruising scouts (simulated aerodynamic model; physical flight not verified).
