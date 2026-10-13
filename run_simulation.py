@@ -1,11 +1,12 @@
-"""AeroMesh Sprint CLI — --hardware / --sitl / --drone-id / --dashboard-port / --dry-run."""
-import argparse, asyncio
+"""AeroMesh Sprint CLI - --hardware / --sitl / --drone-id / --dashboard-port / --dry-run."""
+import argparse, asyncio, time
 from core.autopilot_interface.hybrid_adapter import HybridAutopilotAdapter
 from swarm.failure_detector import FailureDetector
 from core.ai_layer.explainable_logger import SwarmExplainableLogger
 from comm.channel import MinifiedMeshChannel
 from comm.mesh_udp import MeshUDPNode
 from visualization.dashboard_server import start_dashboard, update_dashboard_data
+
 
 async def main():
     parser = argparse.ArgumentParser()
@@ -22,39 +23,49 @@ async def main():
     await adapter.wait_for_ekf_convergence(timeout=120)
     start_dashboard(port=args.dashboard_port)
 
+    public_id = f"uav-{args.drone_id}"
+
     fd = FailureDetector()
-    logger = SwarmExplainableLogger(f"uav-{args.drone_id}")
+    logger = SwarmExplainableLogger(public_id)
     ch = MinifiedMeshChannel(args.drone_id)
     mesh = MeshUDPNode()
     vision_hazard = {"current": "NONE"}
 
     async def flight_control_loop():
         async for pos in adapter.telemetry_stream():
+            lat = pos["position"][0]
+            lon = pos["position"][1]
+            alt = pos["position"][2]
+            hazard = vision_hazard["current"]
+
+            pkt = ch.serialize_telemetry(lat, lon, alt, hazard)
+            mesh.send(pkt)
+
+            status = "SEARCHING" if args.dry_run else "HOLD"
+            logger.log_decision(status, -72.0, hazard, "MAINTAIN_GRID" if args.dry_run else "HOLD")
+
+            update_dashboard_data(public_id, lat, lon, alt, status)
+
             if args.dry_run:
-                pkt = ch.serialize_telemetry(pos["position"][0], pos["position"][1], pos["position"][2], vision_hazard["current"])
-                mesh.send(pkt)
-                logger.log_decision("SEARCHING", -72.0, "CLEAR_TERRAIN", "MAINTAIN_GRID")
                 print("[BOOT] dry-run packet", pos)
-            else:
-                pkt = ch.serialize_telemetry(pos["position"][0], pos["position"][1], pos["position"][2], vision_hazard["current"])
-                mesh.send(pkt)
-                logger.log_decision(str(pos["position"]), pos["battery"], vision_hazard["current"], "HOLD")
-                update_dashboard_data(args.drone_id, pos["position"][0], pos["position"][1], pos["position"][2], vision_hazard["current"])
-            await asyncio.sleep(0.05)  # 20Hz
+
+            await asyncio.sleep(0.05)
 
     async def mesh_receive_loop():
-        now = __import__('time').monotonic()
-        fd.update(args.drone_id, now)
-        failed = fd.get_failed_drones(now)
-        for d in failed:
-            fd.on_failure(d)
-            update_dashboard_data(f"uav-{d}", 0, 0, 0, "ALERT: heartbeat lost")
-            logger.log_decision(str({"failed": d}), -50, "NONE", "REALLOC_STUB")
+        while True:
+            now = time.monotonic()
+            fd.update(args.drone_id, now)
+            failed = fd.get_failed_drones(now)
+            for d in failed:
+                fd.on_failure(d)
+                update_dashboard_data(f"uav-{d}", 0, 0, 0, "ALERT: heartbeat lost")
+                logger.log_decision(str({"failed": d}), -50.0, "NONE", "REALLOC_STUB")
+            await asyncio.sleep(1.0)
 
     async def vision_stub_loop():
         while True:
             vision_hazard["current"] = "HEAT" if args.dry_run else "NONE"
-            await asyncio.sleep(1)
+            await asyncio.sleep(1.0)
 
     try:
         await asyncio.wait_for(
@@ -67,6 +78,7 @@ async def main():
     except asyncio.CancelledError:
         print("[BOOT] Tasks cancelled cleanly")
         return
+
 
 if __name__ == "__main__":
     asyncio.run(main())
