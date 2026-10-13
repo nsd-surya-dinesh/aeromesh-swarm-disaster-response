@@ -65,12 +65,43 @@ MinifiedMeshChannel.get_packet_loss = _Stage1Compat.get_packet_loss
 STATUS_MAP = {1: "SEARCHING", 2: "TARGET_FOUND", 3: "RELAY_BRIDGE", 4: "RTL", 5: "ALERT"}
 
 # --- Stage 1 RFChannel compatibility (restored) ---
+import math as _math
 from comm.channel_legacy import RFChannel as _LegacyRFChannel
 
 RFChannel = _LegacyRFChannel
 STATUS_MAP = {1: "SEARCHING", 2: "TARGET_FOUND", 3: "RELAY_BRIDGE", 4: "RTL", 5: "ALERT"}
 
 _orig_clq = RFChannel.calculate_link_quality
+
 def _clq_compat(self, pos1, pos2, interference_event=None):
-    return _orig_clq(self, pos1, pos2)
+    result = _orig_clq(self, pos1, pos2)
+    if interference_event is None:
+        result["interference_factor"] = 1.0
+        result["interference_db"] = 0.0
+        result["snr_db_clean"] = result["snr_db"]
+        return result
+    factor = 1.0
+    if hasattr(interference_event, "calculate_interference_snr_degradation"):
+        factor = interference_event.calculate_interference_snr_degradation(pos1, pos2)
+    elif hasattr(interference_event, "factor"):
+        factor = interference_event.factor
+    factor = max(1e-6, min(1.0, float(factor)))
+    db_penalty = 10.0 * _math.log10(factor)
+    clean_snr = result["snr_db"]
+    new_snr = clean_snr + db_penalty
+    result["snr_db"] = new_snr
+    result["snr_db_clean"] = clean_snr
+    result["interference_factor"] = factor
+    result["interference_db"] = db_penalty
+    snr_diff = new_snr - self.cfg_rf.min_snr
+    pdr = 1.0 / (1.0 + _math.exp(-0.8 * snr_diff))
+    pdr = float(max(0.0, min(0.999, pdr)))
+    result["pdr"] = pdr
+    result["etx"] = 1.0 / max(0.01, pdr) if pdr > 0.05 else 999.0
+    result["is_connected"] = (
+        new_snr >= self.cfg_rf.min_snr
+        and result["rx_power_dbm"] >= self.cfg_uav.rx_sensitivity
+    )
+    return result
+
 RFChannel.calculate_link_quality = _clq_compat
