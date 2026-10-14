@@ -1,0 +1,27 @@
+running develop
+running egg_info
+creating aeromesh_swarm.egg-info
+writing aeromesh_swarm.egg-info/PKG-INFO
+writing dependency_links to aeromesh_swarm.egg-info/dependency_links.txt
+writing entry points to aeromesh_swarm.egg-info/entry_points.txt
+writing requirements to aeromesh_swarm.egg-info/requires.txt
+writing top-level names to aeromesh_swarm.egg-info/top_level.txt
+writing manifest file 'aeromesh_swarm.egg-info/SOURCES.txt'
+reading manifest file 'aeromesh_swarm.egg-info/SOURCES.txt'
+writing manifest file 'aeromesh_swarm.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/surya/projects/aeromesh-swarm-disaster-response/aeromesh_ws/install/aeromesh_swarm/lib/python3.10/site-packages/aeromesh-swarm.egg-link (link to .)
+Installing cbba_allocator_node script to /home/surya/projects/aeromesh-swarm-disaster-response/aeromesh_ws/install/aeromesh_swarm/lib/aeromesh_swarm
+Installing health_monitor_node script to /home/surya/projects/aeromesh-swarm-disaster-response/aeromesh_ws/install/aeromesh_swarm/lib/aeromesh_swarm
+Installing mesh_router_node script to /home/surya/projects/aeromesh-swarm-disaster-response/aeromesh_ws/install/aeromesh_swarm/lib/aeromesh_swarm
+Installing simulation_bridge_node script to /home/surya/projects/aeromesh-swarm-disaster-response/aeromesh_ws/install/aeromesh_swarm/lib/aeromesh_swarm
+
+Installed /home/surya/projects/aeromesh-swarm-disaster-response/aeromesh_ws/build/aeromesh_swarm
+running symlink_data
+creating /home/surya/projects/aeromesh-swarm-disaster-response/aeromesh_ws/install/aeromesh_swarm/share/ament_index
+creating /home/surya/projects/aeromesh-swarm-disaster-response/aeromesh_ws/install/aeromesh_swarm/share/ament_index/resource_index
+creating /home/surya/projects/aeromesh-swarm-disaster-response/aeromesh_ws/install/aeromesh_swarm/share/ament_index/resource_index/packages
+symbolically linking /home/surya/projects/aeromesh-swarm-disaster-response/aeromesh_ws/build/aeromesh_swarm/resource/aeromesh_swarm -> /home/surya/projects/aeromesh-swarm-disaster-response/aeromesh_ws/install/aeromesh_swarm/share/ament_index/resource_index/packages
+symbolically linking /home/surya/projects/aeromesh-swarm-disaster-response/aeromesh_ws/build/aeromesh_swarm/package.xml -> /home/surya/projects/aeromesh-swarm-disaster-response/aeromesh_ws/install/aeromesh_swarm/share/aeromesh_swarm
+creating /home/surya/projects/aeromesh-swarm-disaster-response/aeromesh_ws/install/aeromesh_swarm/share/aeromesh_swarm/launch
+symbolically linking /home/surya/projects/aeromesh-swarm-disaster-response/aeromesh_ws/build/aeromesh_swarm/launch/launch_stage2.py -> /home/surya/projects/aeromesh-swarm-disaster-response/aeromesh_ws/install/aeromesh_swarm/share/aeromesh_swarm/launch
