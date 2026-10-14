@@ -1,1 +1,0 @@
-/home/surya/projects/aeromesh-swarm-disaster-response/aeromesh_ws/src/aeromesh_swarm/launch/launch_stage2.py

@@ -1,7 +1,0 @@
-matplotlib
-networkx
-numpy
-pydantic
-scipy
-setuptools
-tqdm

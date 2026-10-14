@@ -1,6 +1,0 @@
-[console_scripts]
-cbba_allocator_node = aeromesh_swarm.cbba_allocator_node:main
-health_monitor_node = aeromesh_swarm.health_monitor_node:main
-mesh_router_node = aeromesh_swarm.mesh_router_node:main
-simulation_bridge_node = aeromesh_swarm.simulation_bridge_node:main
-
