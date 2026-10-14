@@ -22,6 +22,9 @@ class UAVState(Enum):
     IDLE = "idle"
     FLYING_TO_POI = "flying_to_poi"
     SURVEYING = "surveying"
+    HOLDING_AT_SURVEY = "holding_at_survey"   # NEW: descend to 3 m, hold, then mark complete
+    FLYING_TO_RELAY = "flying_to_relay"       # NEW: ascend, fly to fixed relay point
+    DELIVERING_DATA = "delivering_data"       # NEW: hold at relay for transfer time
     RELAYING = "relaying"
     RETURNING = "returning"
     CHARGING = "charging"
@@ -113,6 +116,11 @@ class UAV:
     last_heartbeat: float = 0.0
     survey_start_time: Optional[float] = None
     charging_start_time: Optional[float] = None
+
+    # Data muling payload
+    payload_data_mb: float = 0.0  # Accumulated survey data in MB per PoI
+    payload_target_poi_id: int = -1  # Target PoI ID for current payload
+    survey_complete: bool = False  # Whether current PoI survey is complete
 
     # Statistics
     distance_traveled: float = 0.0

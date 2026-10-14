@@ -1,10 +1,33 @@
-﻿results/*_decision_audit.txt
-results/uav-*.txt
+# ROS 2 build artifacts
+build/
+install/
+log/
+*.tar.gz
+
+# Python cache
 __pycache__/
-*.pyc
-*.bak
-*.bak2
+*.py[cod]
+*.egg-info/
 .pytest_cache/
-venv/
+
+# Virtual environments
 .venv/
-env/
+venv/
+
+# Editor / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Secrets — NEVER commit
+.git-credentials
+*.token
+.env
+
+# Backups
+*.bak
+*.zip
+
+aeromesh-swarm-disaster-response/
