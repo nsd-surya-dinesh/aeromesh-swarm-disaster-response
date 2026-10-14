@@ -133,7 +133,10 @@ class UAV:
         """Check if UAV is operational"""
         return self.role != UAVRole.FAILED and self.state != UAVState.FAILED
 
-
+    # Data muling fields
+    payload_data_mb: float = 0.0
+    payload_target_poi_id: int = -1
+    survey_complete: bool = False
 @dataclass
 class GCS:
     """Ground Control Station"""
