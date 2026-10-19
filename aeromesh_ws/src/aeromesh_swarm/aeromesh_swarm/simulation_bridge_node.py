@@ -40,6 +40,17 @@ from aeromesh_swarm.swarm.health_monitor import HealthMonitor
 from aeromesh_swarm.comm.steiner_relay import SteinerRelayManager
 
 
+<<<<<<< HEAD
+=======
+# Data muling constants
+RELAY_POINT_X, RELAY_POINT_Y = 0.0, 200.0
+SURVEY_GROUND_ALT = 3.0
+HOLD_AFTER_SURVEY_SEC = 5.0
+DELIVERY_TRANSFER_SEC = 3.0
+PAYLOAD_MB_PER_POI = 50.0
+
+
+>>>>>>> bb72a88bdd2e74d8a8f512bb134312e062e4d4cb
 class SimulationBridgeNode(Node):
     """ROS 2 node that bridges Python swarm simulation state to ROS 2 topics."""
 
@@ -132,6 +143,10 @@ class SimulationBridgeNode(Node):
                 'battery': self.create_publisher(
                     BatteryState, f'/aeromesh/uav_{uav_id}/battery_state', self.qos_publish
                 ),
+<<<<<<< HEAD
+=======
+                'payload': self.create_publisher(Float32, f'/aeromesh/uav_{uav_id}/payload_mb', self.qos_publish),
+>>>>>>> bb72a88bdd2e74d8a8f512bb134312e062e4d4cb
                 'status': self.create_publisher(
                     String, f'/aeromesh/uav_{uav_id}/status', self.qos_publish
                 ),
@@ -162,6 +177,7 @@ class SimulationBridgeNode(Node):
 
     def simulation_step(self):
         """Execute one simulation timestep and publish UAV states."""
+<<<<<<< HEAD
         # Step the physics engine
         for uav in self.mission_state.get_operational_uavs():
             self.physics_engine.update_uav_kinematics(uav, self.dt)
@@ -170,6 +186,21 @@ class SimulationBridgeNode(Node):
         # Health monitoring
         self.health_monitor.check_node_vitality(self.dt)
 
+=======
+        # Advance simulation time (needed for delivery timers)
+        self.mission_state.time += self.dt
+
+        # Health monitoring first
+        self.health_monitor.check_node_vitality(self.dt)
+
+        # Data-muling state machine — advance each UAV
+        for uav in self.mission_state.uavs.values():
+            try:
+                self._advance_uav_state_machine(uav, self.dt)
+            except Exception as e:
+                self.get_logger().error(f'State machine error UAV {uav.id}: {e}')
+
+>>>>>>> bb72a88bdd2e74d8a8f512bb134312e062e4d4cb
         # Update UAV publishers
         self.publish_uav_states()
 
@@ -205,6 +236,14 @@ class SimulationBridgeNode(Node):
             # Publish status
             status_msg = String()
             status_msg.data = f'{uav.role.value},{uav.state.value}'
+<<<<<<< HEAD
+=======
+            # Publish payload (data muling)
+            payload_msg = Float32()
+            payload_msg.data = float(getattr(uav, 'payload_data_mb', 0.0))
+            self.uav_publishers[uav_id]['payload'].publish(payload_msg)
+
+>>>>>>> bb72a88bdd2e74d8a8f512bb134312e062e4d4cb
             self.uav_publishers[uav_id]['status'].publish(status_msg)
 
     def handle_allocate_tasks(self, request, response):
@@ -249,6 +288,133 @@ class SimulationBridgeNode(Node):
         return response
 
 
+<<<<<<< HEAD
+=======
+    def _advance_uav_state_machine(self, uav, dt):
+        """Advance one UAV through the data-muling lifecycle."""
+        from aeromesh_swarm.core.models import UAVState
+
+        # Dynamic attributes (no dataclass edit needed)
+        if not hasattr(uav, 'payload_data_mb'):
+            uav.payload_data_mb = 0.0
+            uav.survey_complete = False
+            uav.current_target_poi = 0
+            uav.survey_start_time = 0.0
+            uav.delivery_start_time = 0.0
+
+        s = uav.state
+
+        # IDLE → FLYING_TO_POI
+        if s == UAVState.IDLE:
+            uav.current_target_poi = self._next_unsurveyed_poi()
+            if uav.current_target_poi is not None:
+                uav.state = UAVState.FLYING_TO_POI
+
+        # FLYING_TO_POI → SURVEYING
+        elif s == UAVState.FLYING_TO_POI:
+            if uav.current_target_poi is None:
+                uav.state = UAVState.IDLE
+            else:
+                target = self.mission_state.pois.get(uav.current_target_poi)
+                if target is None:
+                    uav.state = UAVState.IDLE
+                else:
+                    # Ascend to cruise altitude if needed
+                    if uav.position.z < 30.0:
+                        uav.position.z = min(30.0, uav.position.z + 3.0 * dt)
+                    # Move horizontally toward the PoI
+                    dx = target.position.x - uav.position.x
+                    dy = target.position.y - uav.position.y
+                    d = (dx*dx + dy*dy) ** 0.5
+                    if d < 10.0:
+                        uav.state = UAVState.SURVEYING
+                        uav.survey_start_time = self.mission_state.time
+                        uav.survey_elapsed = 0.0
+                        self.get_logger().info(
+                            f'UAV {uav.id}: reached PoI {uav.current_target_poi}, surveying'
+                        )
+                    else:
+                        spd = 15.0 * dt
+                        uav.position.x += (dx / d) * spd
+                        uav.position.y += (dy / d) * spd
+
+        # SURVEYING → HOLDING_AT_SURVEY (descend + dwell)
+        elif s == UAVState.SURVEYING:
+            if not hasattr(uav, 'survey_elapsed'):
+                uav.survey_elapsed = 0.0
+            # Try to descend (physics engine may override — that's OK)
+            if uav.position.z > SURVEY_GROUND_ALT:
+                uav.position.z = max(SURVEY_GROUND_ALT,
+                                     uav.position.z - 2.0 * dt)
+            # Increment timer UNCONDITIONALLY — no altitude dependency
+            uav.survey_elapsed += dt
+            if uav.survey_elapsed >= HOLD_AFTER_SURVEY_SEC:
+                    uav.state = UAVState.HOLDING_AT_SURVEY
+                    uav.survey_complete = True
+                    uav.payload_data_mb = PAYLOAD_MB_PER_POI
+                    if uav.current_target_poi in self.mission_state.pois:
+                        self.mission_state.pois[uav.current_target_poi].surveyed = True
+                    self.get_logger().info(
+                        f'UAV {uav.id}: survey complete at PoI '
+                        f'{uav.current_target_poi}, payload = '
+                        f'{uav.payload_data_mb} MB'
+                    )
+
+        # HOLDING_AT_SURVEY → FLYING_TO_RELAY
+        elif s == UAVState.HOLDING_AT_SURVEY:
+            if uav.payload_data_mb > 0:
+                uav.state = UAVState.FLYING_TO_RELAY
+                self.get_logger().info(f'UAV {uav.id}: heading to relay')
+
+        # FLYING_TO_RELAY → DELIVERING_DATA
+        elif s == UAVState.FLYING_TO_RELAY:
+            if uav.position.z < 30.0:
+                uav.position.z = min(30.0, uav.position.z + 3.0 * dt)
+            else:
+                dx = RELAY_POINT_X - uav.position.x
+                dy = RELAY_POINT_Y - uav.position.y
+                dist = (dx*dx + dy*dy) ** 0.5
+                if dist < 10.0:
+                    uav.state = UAVState.DELIVERING_DATA
+                    uav.delivery_start_time = self.mission_state.time
+                else:
+                    spd = 15.0 * dt
+                    uav.position.x += (dx/dist) * spd
+                    uav.position.y += (dy/dist) * spd
+
+        # DELIVERING_DATA → FLYING_TO_POI (next task)
+        elif s == UAVState.DELIVERING_DATA:
+            elapsed = self.mission_state.time - uav.delivery_start_time
+            if elapsed >= DELIVERY_TRANSFER_SEC:
+                self.get_logger().info(
+                    f'UAV {uav.id}: delivered {uav.payload_data_mb} MB to relay'
+                )
+                uav.payload_data_mb = 0.0
+                uav.survey_complete = False
+                nxt = self._next_unsurveyed_poi()
+                if nxt is not None:
+                    uav.current_target_poi = nxt
+                    uav.state = UAVState.FLYING_TO_POI
+                else:
+                    uav.state = UAVState.IDLE
+
+    def _next_unsurveyed_poi(self):
+        """Return the first unclaimed + unsurveyed PoI, or None."""
+        # Collect PoIs already claimed by other UAVs
+        claimed = set()
+        for other in self.mission_state.uavs.values():
+            if getattr(other, 'current_target_poi', None) is not None:
+                claimed.add(other.current_target_poi)
+        for poi_id, poi in self.mission_state.pois.items():
+            if getattr(poi, 'surveyed', False):
+                continue
+            if poi_id in claimed:
+                continue
+            return poi_id
+        return None
+
+
+>>>>>>> bb72a88bdd2e74d8a8f512bb134312e062e4d4cb
 def main(args=None):
     rclpy.init(args=args)
     node = SimulationBridgeNode()
@@ -257,4 +423,8 @@ def main(args=None):
 
 
 if __name__ == '__main__':
+<<<<<<< HEAD
     main()
+=======
+    main()
+>>>>>>> bb72a88bdd2e74d8a8f512bb134312e062e4d4cb

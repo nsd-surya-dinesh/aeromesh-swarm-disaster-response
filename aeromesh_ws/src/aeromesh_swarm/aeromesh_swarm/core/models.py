@@ -22,6 +22,9 @@ class UAVState(Enum):
     IDLE = "idle"
     FLYING_TO_POI = "flying_to_poi"
     SURVEYING = "surveying"
+    HOLDING_AT_SURVEY = "holding_at_survey"
+    FLYING_TO_RELAY = "flying_to_relay"
+    DELIVERING_DATA = "delivering_data"
     RELAYING = "relaying"
     RETURNING = "returning"
     CHARGING = "charging"
@@ -130,7 +133,10 @@ class UAV:
         """Check if UAV is operational"""
         return self.role != UAVRole.FAILED and self.state != UAVState.FAILED
 
-
+    # Data muling fields
+    payload_data_mb: float = 0.0
+    payload_target_poi_id: int = -1
+    survey_complete: bool = False
 @dataclass
 class GCS:
     """Ground Control Station"""

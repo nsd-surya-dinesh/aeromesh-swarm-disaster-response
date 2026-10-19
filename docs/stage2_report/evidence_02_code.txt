@@ -1,0 +1,51 @@
+### Package Structure
+aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/bootstrap.py
+aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/cbba_allocator_node.py
+aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/comm/channel_legacy.py
+aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/comm/channel.py
+aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/comm/__init__.py
+aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/comm/mesh_router.py
+aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/comm/mesh_udp.py
+aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/comm/steiner_relay.py
+aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/core/ai_layer/automation.py
+aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/core/ai_layer/explainable_logger.py
+aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/core/autopilot_interface/adapter.py
+aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/core/autopilot_interface/command_validation.py
+aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/core/autopilot_interface/hybrid_adapter.py
+aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/core/autopilot_interface/mock_adapter.py
+aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/core/autopilot_interface/simulator_adapter.py
+aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/core/autopilot_interface/vehicle_state.py
+aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/core/config.py
+aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/core/__init__.py
+aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/core/models.py
+aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/core/physics.py
+aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/health_monitor_node.py
+aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/__init__.py
+aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/mesh_router_node.py
+aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/simulation_bridge_node.py
+aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/swarm/dynamic_events.py
+aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/swarm/failure_detector.py
+aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/swarm/health_monitor.py
+aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/swarm/__init__.py
+aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/swarm/path_planner.py
+aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/swarm/relay_aware_rtb.py
+aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/swarm/swap_10_poi.py
+aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/swarm/task_allocation.py
+aeromesh_ws/src/aeromesh_swarm/cbba_allocator_node.py
+aeromesh_ws/src/aeromesh_swarm/health_monitor_node.py
+aeromesh_ws/src/aeromesh_swarm/launch/launch_stage2.py
+aeromesh_ws/src/aeromesh_swarm/launch_stage2.py
+aeromesh_ws/src/aeromesh_swarm/mesh_router_node.py
+aeromesh_ws/src/aeromesh_swarm/package.xml
+aeromesh_ws/src/aeromesh_swarm/setup.cfg
+aeromesh_ws/src/aeromesh_swarm/setup.py
+aeromesh_ws/src/aeromesh_swarm/simulation_bridge_node.py
+
+### Line counts
+  126 aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/bootstrap.py
+   64 aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/cbba_allocator_node.py
+  127 aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/health_monitor_node.py
+    0 aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/__init__.py
+  115 aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/mesh_router_node.py
+  403 aeromesh_ws/src/aeromesh_swarm/aeromesh_swarm/simulation_bridge_node.py
+  835 total

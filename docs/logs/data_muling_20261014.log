@@ -1,0 +1,77 @@
+[INFO] [launch]: All log files can be found below /home/surya/.ros/log/2026-10-14-19-09-24-733631-phantom-31537
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [simulation_bridge_node-1]: process started with pid [31539]
+[INFO] [cbba_allocator_node-2]: process started with pid [31541]
+[INFO] [mesh_router_node-3]: process started with pid [31543]
+[INFO] [health_monitor_node-4]: process started with pid [31545]
+[cbba_allocator_node-2] [INFO] [1791985165.224110556] [cbba_allocator_node]: CBBA allocator node initialized
+[health_monitor_node-4] [INFO] [1791985165.247811590] [health_monitor_node]: Health monitor node initialized
+[mesh_router_node-3] [INFO] [1791985165.478571985] [mesh_router_node]: Mesh router node initialized
+[simulation_bridge_node-1] [INFO] [1791985165.489777053] [simulation_bridge_node]: Simulation bridge node initialized
+[mesh_router_node-3] [INFO] [1791985170.454257228] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00
+[mesh_router_node-3] [INFO] [1791985175.453980798] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00
+[mesh_router_node-3] [INFO] [1791985181.092997374] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00
+[mesh_router_node-3] [INFO] [1791985185.455268203] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00
+[mesh_router_node-3] [INFO] [1791985190.453457075] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00
+[mesh_router_node-3] [INFO] [1791985195.456326356] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00
+[mesh_router_node-3] [INFO] [1791985200.456857723] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00
+[simulation_bridge_node-1] [INFO] [1791985202.141333368] [simulation_bridge_node]: UAV 4: reached PoI 5, surveying
+[mesh_router_node-3] [INFO] [1791985205.455197496] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00
+[simulation_bridge_node-1] [INFO] [1791985207.240435288] [simulation_bridge_node]: UAV 4: survey complete at PoI 5, payload = 50.0 MB
+[simulation_bridge_node-1] [INFO] [1791985207.340787517] [simulation_bridge_node]: UAV 4: heading to relay
+[mesh_router_node-3] [INFO] [1791985210.453079867] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00
+[simulation_bridge_node-1] [INFO] [1791985213.739666223] [simulation_bridge_node]: UAV 0: reached PoI 1, surveying
+[simulation_bridge_node-1] [INFO] [1791985214.239842365] [simulation_bridge_node]: UAV 1: reached PoI 2, surveying
+[mesh_router_node-3] [INFO] [1791985215.452362807] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00
+[simulation_bridge_node-1] [INFO] [1791985218.840538137] [simulation_bridge_node]: UAV 0: survey complete at PoI 1, payload = 50.0 MB
+[simulation_bridge_node-1] [INFO] [1791985218.940826979] [simulation_bridge_node]: UAV 0: heading to relay
+[simulation_bridge_node-1] [INFO] [1791985219.340409441] [simulation_bridge_node]: UAV 1: survey complete at PoI 2, payload = 50.0 MB
+[simulation_bridge_node-1] [INFO] [1791985219.441033242] [simulation_bridge_node]: UAV 1: heading to relay
+[simulation_bridge_node-1] [INFO] [1791985220.041336397] [simulation_bridge_node]: UAV 3: reached PoI 4, surveying
+[mesh_router_node-3] [INFO] [1791985220.455286466] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00
+[simulation_bridge_node-1] [INFO] [1791985225.140285435] [simulation_bridge_node]: UAV 3: survey complete at PoI 4, payload = 50.0 MB
+[simulation_bridge_node-1] [INFO] [1791985225.240476119] [simulation_bridge_node]: UAV 3: heading to relay
+[mesh_router_node-3] [INFO] [1791985225.451765807] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00
+[mesh_router_node-3] [INFO] [1791985230.452425065] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00
+[simulation_bridge_node-1] [INFO] [1791985233.439420362] [simulation_bridge_node]: UAV 4: delivered 50.0 MB to relay
+[mesh_router_node-3] [INFO] [1791985235.452507249] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00
+[mesh_router_node-3] [INFO] [1791985240.452748370] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00
+[simulation_bridge_node-1] [INFO] [1791985244.139659140] [simulation_bridge_node]: UAV 2: reached PoI 3, surveying
+[mesh_router_node-3] [INFO] [1791985245.452953511] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00
+[simulation_bridge_node-1] [INFO] [1791985249.740129537] [simulation_bridge_node]: UAV 2: survey complete at PoI 3, payload = 50.0 MB
+[simulation_bridge_node-1] [INFO] [1791985249.839514350] [simulation_bridge_node]: UAV 2: heading to relay
+[mesh_router_node-3] [INFO] [1791985251.006751893] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00
+[simulation_bridge_node-1] [INFO] [1791985253.940692507] [simulation_bridge_node]: UAV 4: reached PoI 0, surveying
+[mesh_router_node-3] [INFO] [1791985255.452364610] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00
+[simulation_bridge_node-1] [INFO] [1791985259.040916580] [simulation_bridge_node]: UAV 4: survey complete at PoI 0, payload = 50.0 MB
+[simulation_bridge_node-1] [INFO] [1791985259.141530040] [simulation_bridge_node]: UAV 4: heading to relay
+[mesh_router_node-3] [INFO] [1791985260.451757232] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00
+[simulation_bridge_node-1] [INFO] [1791985261.640620129] [simulation_bridge_node]: UAV 0: delivered 50.0 MB to relay
+[mesh_router_node-3] [INFO] [1791985265.455418578] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00
+[simulation_bridge_node-1] [INFO] [1791985266.739791458] [simulation_bridge_node]: UAV 3: delivered 50.0 MB to relay
+[simulation_bridge_node-1] [INFO] [1791985269.039549155] [simulation_bridge_node]: UAV 1: delivered 50.0 MB to relay
+[mesh_router_node-3] [INFO] [1791985270.453029143] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00
+[mesh_router_node-3] [INFO] [1791985275.454825001] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00
+[mesh_router_node-3] [INFO] [1791985281.044941728] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00
+[simulation_bridge_node-1] [INFO] [1791985281.839910515] [simulation_bridge_node]: UAV 4: delivered 50.0 MB to relay
+[mesh_router_node-3] [INFO] [1791985285.453273310] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00
+[mesh_router_node-3] [INFO] [1791985290.453835723] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00
+[mesh_router_node-3] [INFO] [1791985295.452518739] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00
+[mesh_router_node-3] [INFO] [1791985300.463031027] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00
+[mesh_router_node-3] [INFO] [1791985305.452733571] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00
+[simulation_bridge_node-1] [INFO] [1791985308.840419877] [simulation_bridge_node]: UAV 0: reached PoI 6, surveying
+[simulation_bridge_node-1] [INFO] [1791985310.239865868] [simulation_bridge_node]: UAV 3: reached PoI 7, surveying
+[mesh_router_node-3] [INFO] [1791985310.454511638] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00
+[simulation_bridge_node-1] [INFO] [1791985314.439309580] [simulation_bridge_node]: UAV 0: survey complete at PoI 6, payload = 50.0 MB
+[simulation_bridge_node-1] [INFO] [1791985314.539416257] [simulation_bridge_node]: UAV 0: heading to relay
+[simulation_bridge_node-1] [INFO] [1791985315.839776002] [simulation_bridge_node]: UAV 3: survey complete at PoI 7, payload = 50.0 MB
+[simulation_bridge_node-1] [INFO] [1791985315.939404092] [simulation_bridge_node]: UAV 3: heading to relay
+[mesh_router_node-3] [INFO] [1791985316.022687053] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00
+[simulation_bridge_node-1] [INFO] [1791985319.839105396] [simulation_bridge_node]: UAV 1: reached PoI 8, surveying
+[mesh_router_node-3] [INFO] [1791985320.451434629] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00
+[simulation_bridge_node-1] [INFO] [1791985322.140707623] [simulation_bridge_node]: UAV 2: delivered 50.0 MB to relay
+[simulation_bridge_node-1] [INFO] [1791985324.939426782] [simulation_bridge_node]: UAV 1: survey complete at PoI 8, payload = 50.0 MB
+[simulation_bridge_node-1] [INFO] [1791985325.040083296] [simulation_bridge_node]: UAV 1: heading to relay
+[mesh_router_node-3] [INFO] [1791985325.451319693] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00
+[mesh_router_node-3] [INFO] [1791985330.452921531] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00
+[mesh_router_node-3] [INFO] [1791985335.453128230] [mesh_router_node]: Topology updated: 6 nodes, 15 edges, PDR: 0.00

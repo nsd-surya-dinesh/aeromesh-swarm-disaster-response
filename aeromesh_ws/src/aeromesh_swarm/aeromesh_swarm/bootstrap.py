@@ -14,6 +14,17 @@ from aeromesh_swarm.core.models import (
 )
 from aeromesh_swarm.core.config import config
 
+
+# ---------------------------------------------------------------
+# Data muling constants
+# ---------------------------------------------------------------
+RELAY_POINT_X = 0.0
+RELAY_POINT_Y = 200.0
+SURVEY_GROUND_ALT = 3.0
+HOLD_AFTER_SURVEY_SEC = 5.0
+DELIVERY_TRANSFER_SEC = 3.0
+PAYLOAD_MB_PER_POI = 50.0
+
 def _safe_enum(enum_class, *candidates):
     """Pick the first matching member of enum_class, else first member."""
     for name in candidates:

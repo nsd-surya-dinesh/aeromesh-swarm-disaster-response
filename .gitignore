@@ -13,3 +13,13 @@ Thumbs.db
 .git-credentials
 *.tar.gz
 *.zip
+# ROS 2 build artifacts + vision build artifacts
+build/
+install/
+*.tar.gz
+*.zip
+.venv/
+venv/
+.pytest_cache/
+.cache/
+.claude/

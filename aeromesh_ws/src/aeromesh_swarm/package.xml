@@ -2,6 +2,8 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>aeromesh_swarm</name>
+  <version>1.0.0</version>
+  <description>AeroMesh-Swarm: Communication-Aware UAV Swarm for Disaster Response + ROS 2 nodes</description>
   <version>0.1.0</version>
   <description>AeroMesh-Swarm Stage 2 ROS 2 nodes for PUSHPAK Grand Challenge 2026</description>
   <maintainer email="nagasuryadinesh@gmail.com">Ganta Naga Surya Dinesh</maintainer>
@@ -23,3 +25,4 @@
     <build_type>ament_python</build_type>
   </export>
 </package>
+>>>>>>> 7cf5a89 (Stage 2: 4-node ROS 2 package builds, launches, publishes topology)
