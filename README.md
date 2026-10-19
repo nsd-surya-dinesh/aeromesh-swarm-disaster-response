@@ -2,7 +2,8 @@
 
 <div align="center">
 
-[![Tests](https://img.shields.io/badge/tests-19%2F19%20interference%20%28PASS%29-brightgreen)](tests/test_interference.py)
+[![Tests](https://img.shields.io/badge/tests-105%20passed%20%7C%201%20xfailed-brightgreen)](tests/)
+[![Vision%20Tests](https://img.shields.io/badge/vision%20tests-20%2F20%20PASS-brightgreen)](tests/test_computer_vision.py)
 [![Python](https://img.shields.io/badge/python-3.12-blue)](https://www.python.org/)
 [![Route%20Recovery](https://img.shields.io/badge/route%20recovery-8%2F10%20%28PASS%2C%202%20topology%20notes%29-yellow)](tests/test_route_recovery.py)
 [![Stage](https://img.shields.io/badge/stage-2%20in%20progress-orange)]()
@@ -39,7 +40,8 @@
 | **🔄 Self-Healing Network** | Partial | Mid-path reroute (`mesh_router` loop prevention + TTL + retry); recovery time NOT measured with monotonic clock; mechanism verified by `test_route_recovery.py` (8/10) |
 | **🔋 Battery / RTB** | Simulated | `MissionState` tracks battery; physical verification NONE |
 | **⚡ Dynamic Event Injection** | Implemented + tested | RF jamming spheres (3D), PoI insertion, hazards (B2 documented limit) |
-| **🛡️ Safety / Geofence / Collision** | Tracked (sim) | `MissionState` tracks violations/separation; physical verification NONE |
+| **👁️ Computer Vision & Perception** | Implemented + tested | UAV detection (HSV/contours), obstacle estimation (pinhole depth) + LiDAR point-cloud clustering, hazard overlay, sensor bridge, kill-switch safety gate; integrated with `PathPlanner`; 20/20 tests pass |
+| **🛡️ Safety / Geofence / Collision** | Implemented (sim) | APF cooperation + kill-switch gate + vision obstacle integration (`core/computer_vision/`); physical verification NONE |
 | **📊 Visualization** | Implemented | Pygame GUI + web dashboard (Stage 1); Stage 2 adapters documented |
 | **🔒 Real-Time Integration (Phase 0–2)** | Implemented (sim) | `core/autopilot_interface/`: adapter + mock + command gateway + audit; SITL Phase 3 planned; NO ROS2 / PX4 / Gazebo verified |
 | **✅ Testing** | Verified | 19 interference + 10 route-recovery (8 pass, 2 topology notes); adapter files compile; mock never arms |
@@ -88,8 +90,11 @@ python run_simulation.py --scenario 3 --record
 Quick verification of all claims:
 
 ```bash
-# Run complete test suite (19 tests)
+# Run complete test suite (105 passed, 1 xfailed)
 python -m pytest tests/ -v
+
+# Run computer vision perception & safety pipeline tests (20 tests)
+python -m pytest tests/test_computer_vision.py -v
 
 # Generate full benchmark report (all 4 scenarios)
 python run_simulation.py --benchmark-all
@@ -286,9 +291,9 @@ python -m pytest tests/ --cov=. --cov-report=html
   - Phase 8: HITL checklist (`HARDWARE_TEST_CHECKLIST.md`) ✓
   - Phase 9: Documentation (7 artifacts + changelog) ✓
   - Phase 10: Acceptance gates (`SITL_VALIDATION.md`) — defined (Level 1–6)
-- ⚪ **Stage 3 — Not started** (planned Q1 2027): Hardware deployment (Pixhawk / Jetson / 802.11s) — requires verified SITL + HITL + supervised flight.
+- ✅ **Stage 2 — In progress** (2026-10-18): All remaining work consolidated per GC1 Stage 2 Scenario; hardware integration planned for Q1 2027 with verified SITL gate.
 
-> **Important**: ROS 2 / PX4 SITL / Gazebo are listed as planned for Stage 2/3. No verified connection, command transmission, or live integration has been performed. See `docs/SITL_VALIDATION.md` for the staged gate approach; default mode must never arm or take off.
+> **Important**: ROS 2 / PX4 SITL / Gazebo are listed as planned for Stage 2. No verified connection, command transmission, or live integration has been performed. See `docs/SITL_VALIDATION.md` for the staged gate approach; default mode must never arm or take off.
 
 ---
 
@@ -334,6 +339,8 @@ python -m pytest tests/ -v
 | 10-PoI swap algorithm | Implemented | `swarm/swap_10_poi.py`: dual mission + network decision |
 | Relay-aware RTB | Implemented | `swarm/relay_aware_rtb.py`: dependency-check before relay leaves |
 | AI automation layer | Implemented | `core/ai_layer/automation.py`: priority updates, validation |
+| Computer vision & perception pipeline | Implemented + tested | `core/computer_vision/`: UAV detector, obstacle vision (pinhole depth + LiDAR point cloud clustering), hazard overlay, sensor bridge (fake + physical source adapters), kill switch; 20/20 unit tests |
+| Swarm path planner vision integration | Implemented + tested | `swarm/path_planner.py`: `update_vision_obstacles()` feeds obstacle vectors into APF repulsive collision avoidance |
 | Hardware budget map | Implemented | `docs/STAGE3_HARDWARE_MAP.md`; 2-drone build under ₹1,00,000 INR |
 
 ### Known Limitations (verified — 2026-10-13)

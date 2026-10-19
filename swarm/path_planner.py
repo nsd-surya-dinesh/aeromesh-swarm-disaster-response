@@ -18,6 +18,28 @@ class PathPlanner:
         self.cfg_uav = config.uav
         self.min_separation = 15.0  # meters minimum distance between UAVs
         self.collision_avoidance_gain = 3.0
+        self._vision_obstacles: List[Vector3D] = []
+
+    # ------------------------------------------------------------------
+    # Vision integration
+    # ------------------------------------------------------------------
+    def update_vision_obstacles(self, obstacles) -> None:
+        """Accept obstacles from the computer-vision pipeline.
+
+        `obstacles` is a list of core.computer_vision.types.Obstacle (or anything
+        with a .to_vector3d() method or a .position tuple).
+        """
+        vecs: List[Vector3D] = []
+        for obs in obstacles:
+            if hasattr(obs, "to_vector3d"):
+                v = obs.to_vector3d()
+                if isinstance(v, Vector3D):
+                    vecs.append(v)
+                else:
+                    vecs.append(Vector3D(*v))
+            elif hasattr(obs, "position"):
+                vecs.append(Vector3D(*obs.position))
+        self._vision_obstacles = vecs
 
     def compute_collision_avoidance_vector(self, uav: UAV) -> Vector3D:
         """
@@ -35,6 +57,14 @@ class PathPlanner:
 
             if dist < self.min_separation and dist > 1e-3:
                 # Strong repulsive gradient
+                magnitude = self.collision_avoidance_gain * ((self.min_separation - dist) / dist)
+                repulsive_force = repulsive_force + (delta.normalize() * magnitude)
+
+        # Vision-detected obstacle avoidance
+        for obs_pos in self._vision_obstacles:
+            delta = uav.position - obs_pos
+            dist = delta.norm()
+            if dist < self.min_separation and dist > 1e-3:
                 magnitude = self.collision_avoidance_gain * ((self.min_separation - dist) / dist)
                 repulsive_force = repulsive_force + (delta.normalize() * magnitude)
 
