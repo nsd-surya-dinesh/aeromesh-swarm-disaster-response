@@ -1,0 +1,2 @@
+# Minimal pinned requirements for test/mission.py and adapter
+pymavlink==2.4.41
