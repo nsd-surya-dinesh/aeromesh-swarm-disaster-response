@@ -64,6 +64,32 @@ def get_telemetry():
     with _db_lock:
         return jsonify(dict(swarm_telemetry_db))
 
+@app.route('/api/update-param', methods=['POST'])
+def update_param():
+    from flask import request
+    try:
+        data = request.get_json(force=True)
+        key = data.get('key')
+        value = data.get('value')
+        # R6: dynamic parameter updates with validation
+        if key == 'survey_altitude' and isinstance(value, (int, float)):
+            from core.config import config
+            if 10 <= value <= 200:
+                config.uav.survey_altitude = float(value)
+                return jsonify({'status':'updated','key':key,'value':value}), 200
+            else:
+                return jsonify({'status':'rejected','reason':'out of range [10,200]'}), 400
+        elif key == 'rtb_threshold' and isinstance(value, (int, float)):
+            if 0 <= value <= 1:
+                from core.config import config
+                config.uav.rtb_threshold_ratio = float(value)
+                return jsonify({'status':'updated','key':key,'value':value}), 200
+            else:
+                return jsonify({'status':'rejected','reason':'fraction required [0,1]'}), 400
+        return jsonify({'status':'rejected','reason':'unknown parameter'}), 400
+    except Exception as e:
+        return jsonify({'status':'error','reason':str(e)}), 500
+
 def update_dashboard_data(drone_id, lat, lon, alt, human_status):
     with _db_lock:
         swarm_telemetry_db[drone_id] = {'lat': lat, 'lon': lon, 'alt': alt, 'status': human_status}

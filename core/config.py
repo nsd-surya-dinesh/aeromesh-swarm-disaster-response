@@ -16,7 +16,9 @@ class MissionConfig:
 
     # Time parameters
     dt: float = 0.1  # simulation timestep (seconds)
-    max_mission_time: float = 1800.0  # 30 minutes
+    max_mission_time: float = 1200.0  # 20 minutes (configurable; was 1800)
+    mission_duration_target_s: float = 1200.0  # R4 evaluation target
+    emergency_reserve_s: float = 300.0  # R4 emergency reserve
 
     # GCS position
     gcs_position: tuple = (0.0, 0.0, 0.0)  # (x, y, z) meters
@@ -40,6 +42,8 @@ class UAVConfig:
     # Energy reserve and safety margins
     energy_reserve_ratio: float = 0.15  # 15% reserve
     rtb_threshold_ratio: float = 0.25  # Return-to-base at 25%
+    # Battery representation: configurable percent (0-100) and capacity
+    battery_percent_display: bool = True  # Show % not fraction on dashboard
 
     # Communication
     tx_power: float = 1.0  # Watts (30 dBm)

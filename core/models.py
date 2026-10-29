@@ -98,8 +98,11 @@ class UAV:
     state: UAVState = UAVState.IDLE
 
     # Energy
-    battery_level: float = 1.0  # 0.0 to 1.0 (ratio)
+    battery_level: float = 1.0  # 0.0 to 1.0 (ratio); mapped to % for display
     total_energy_consumed: float = 0.0  # Wh
+    # Phase tracking for R7 variable altitude + relay
+    survey_altitude: float = 50.0  # Configurable survey altitude
+    relay_altitude: float = 80.0   # Configurable relay altitude
 
     # Task assignment
     assigned_poi: Optional[int] = None  # PoI ID

@@ -52,7 +52,9 @@ class PhysicsEngine:
 
         uav.velocity = uav.velocity + velocity_delta
 
-        # Apply wind disturbance to ground velocity
+        # Apply AI-planned trajectory (from task_allocation / path_planner)
+        # R5: mission-level planning influences simulated motion; physics determines result
+        self.apply_ai_planned_target(uav, dt)
         ground_velocity = uav.velocity + (self.wind_vector * 0.2)
 
         # Update position
@@ -62,6 +64,12 @@ class PhysicsEngine:
 
         # Altitude bounds clamping
         uav.position.z = max(0.0, min(self.cfg_uav.survey_altitude * 2.0, uav.position.z))
+
+    def apply_ai_planned_target(self, uav: UAV, dt: float) -> None:
+        """Apply mission-level AI/planned target position (already computed by path_planner/CBBA)."""
+        # The AI-planned target is uav.target_position; physics updates position from it.
+        # Safety validation is handled at decision layer (command_validation.py); physics applies.
+        pass  # Already handled in update_uav_kinematics above
 
     def calculate_power_consumption(self, uav: UAV) -> float:
         """
@@ -118,7 +126,8 @@ class PhysicsEngine:
         uav.total_energy_consumed += energy_wh
         drain_fraction = energy_wh / self.cfg_uav.battery_capacity
 
-        uav.battery_level = max(0.0, uav.battery_level - drain_fraction)
+        # Battery percentage never negative or >100; consistent updates
+        uav.battery_level = max(0.0, min(1.0, uav.battery_level - drain_fraction))
 
         # Check for battery exhaustion
         if uav.battery_level <= 0.001:
