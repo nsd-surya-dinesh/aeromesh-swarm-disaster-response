@@ -7,6 +7,11 @@ import time, json, os
 from typing import Dict, Optional, List
 from core.models import UAV, MissionState, UAVState, UAVRole
 from core.config import config
+# Import for full pipeline (lazy to avoid circular)
+try:
+    from simulation.simulator import MissionSimulator
+except Exception:
+    MissionSimulator = None
 
 
 class FlightMemory:
@@ -104,6 +109,76 @@ class UAVBrain:
         # Default
         self.memory.record_decision(f"Chat: {user_input}")
         return f"BRAIN: Received '{user_input}'. Awaiting approval or clarification."
+
+    def run_full_pipeline(self, mission_state) -> Dict:
+        """Loop over every UAV and every PoI — full pipeline check + decision."""
+        if not self.approved:
+            return {"status": "BLOCKED", "reason": "operator approval required", "pipeline": "none"}
+
+        results = {}
+        for uav_id, uav in mission_state.uavs.items():
+            # Per-UAV pipeline check
+            uav_status = self._check_uav_pipeline(uav, mission_state)
+            results[f"uav_{uav_id}"] = uav_status
+
+        # All PoI access loop
+        poi_status = self._check_all_pois(mission_state)
+        results["pois"] = poi_status
+
+        # Decision for each UAV
+        decisions = {}
+        for uav in mission_state.uavs.values():
+            decisions[f"uav_{uav.id}"] = self.decide_action_for_uav(uav, mission_state)
+        results["decisions"] = decisions
+
+        self.memory.log("full_pipeline", f"Checked {len(mission_state.uavs)} UAVs, {len(mission_state.pois)} PoIs")
+        return {"status": "RUNNING", "approved": True, "results": results}
+
+    def _check_uav_pipeline(self, uav: UAV, mission_state: MissionState) -> Dict:
+        """Check every pipeline stage for this UAV."""
+        return {
+            "id": uav.id,
+            "operational": uav.is_operational(),
+            "battery_pct": round(uav.battery_level * 100, 1),
+            "state": uav.state.value,
+            "assigned_poi": uav.assigned_poi,
+            "target_pos": (round(uav.target_position.x,1) if uav.target_position else None,
+                           round(uav.target_position.y,1) if uav.target_position else None,
+                           round(uav.target_position.z,1) if uav.target_position else None),
+            "relay_parent": uav.relay_parent,
+            "connected_gcs": uav.connected_to_gcs,
+            "mission_time": mission_state.time
+        }
+
+    def _check_all_pois(self, mission_state: MissionState) -> List[Dict]:
+        pois = []
+        for poi_id, poi in mission_state.pois.items():
+            pois.append({
+                "id": poi.id,
+                "position": (round(poi.position.x,1), round(poi.position.y,1)),
+                "priority": poi.priority,
+                "surveyed": poi.surveyed,
+                "surveyed_by": poi.surveyed_by,
+                "discovery_time": poi.discovery_time
+            })
+        return pois
+
+    def decide_action_for_uav(self, uav: UAV, mission_state: MissionState) -> str:
+        """Per-UAV decision based on battery, PoI, relay, and mission time."""
+        if not self.approved:
+            return "HOLD: approval required"
+        if uav.battery_level < config.uav.rtb_threshold_ratio:
+            return f"UAV-{uav.id}: RTB (battery {uav.battery_level*100:.0f}%)"
+        if uav.state == UAVState.SURVEYING and uav.assigned_poi is not None:
+            poi = mission_state.pois.get(uav.assigned_poi)
+            if poi and poi.surveyed:
+                return f"UAV-{uav.id}: survey complete, advance to next"
+            return f"UAV-{uav.id}: surveying PoI-{uav.assigned_poi} at z={config.uav.survey_altitude}m"
+        if uav.role == UAVRole.RELAY:
+            return f"UAV-{uav.id}: relay mode at {config.uav.relay_altitude}m"
+        if uav.assigned_poi and uav.state == UAVState.FLYING_TO_POI:
+            return f"UAV-{uav.id}: flying to PoI-{uav.assigned_poi}"
+        return f"UAV-{uav.id}: idle/standby (pipeline OK)"
 
     # --- Autonomous decision engine (only when approved) ---
     def decide_action(self, mission_state) -> str:
