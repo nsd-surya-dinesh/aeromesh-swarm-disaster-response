@@ -1,0 +1,77 @@
+pygame 2.6.1 (SDL 2.28.4, Python 3.12.7)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+
+=== Running Comprehensive Benchmark Suite Across All 4 Scenarios ===
+
+>> Executing Scenario 1: Baseline...
+>> Starting mission simulation...
+   UAVs: 5, PoIs: 10
+   t=0s | Coverage: 0.0%
+   t=30s | Coverage: 0.0%
+   t=60s | Coverage: 0.0%
+   t=90s | Coverage: 20.0%
+   t=120s | Coverage: 50.0%
+   t=150s | Coverage: 70.0%
+   t=180s | Coverage: 80.0%
+   t=210s | Coverage: 90.0%
+[+] Mission completed at t=229.8s
+>> Executing Scenario 2: Deep Canyon...
+>> Starting mission simulation...
+   UAVs: 6, PoIs: 8
+   t=0s | Coverage: 0.0%
+   t=30s | Coverage: 0.0%
+   t=60s | Coverage: 0.0%
+   t=90s | Coverage: 0.0%
+   t=120s | Coverage: 0.0%
+   t=150s | Coverage: 12.5%
+   t=180s | Coverage: 12.5%
+   t=210s | Coverage: 37.5%
+   t=240s | Coverage: 50.0%
+[+] Mission completed at t=258.2s
+>> Executing Scenario 3: Dynamic Fault...
+>> Starting mission simulation...
+   UAVs: 6, PoIs: 8
+   t=0s | Coverage: 0.0%
+   t=30s | Coverage: 0.0%
+   t=60s | Coverage: 0.0%
+   t=90s | Coverage: 25.0%
+   t=120s | Coverage: 37.5%
+   t=150s | Coverage: 37.5%
+   t=180s | Coverage: 75.0%
+   t=210s | Coverage: 75.0%
+[+] Mission completed at t=229.9s
+>> Executing Scenario 4: Endurance...
+>> Starting mission simulation...
+   UAVs: 8, PoIs: 16
+   t=0s | Coverage: 0.0%
+   t=30s | Coverage: 0.0%
+   t=60s | Coverage: 0.0%
+   t=90s | Coverage: 6.2%
+   t=120s | Coverage: 31.2%
+   t=150s | Coverage: 37.5%
+   t=180s | Coverage: 56.2%
+   t=210s | Coverage: 75.0%
+   t=240s | Coverage: 93.8%
+   t=270s | Coverage: 93.8%
+   t=300s | Coverage: 93.8%
+[+] Mission completed at t=303.9s
+
+================================================================================
+BENCHMARK COMPARISON MATRIX
+================================================================================
+Metric                           | S1: Baseline | S2: Canyon   | S3: Fault    | S4: Endurance
+--------------------------------------------------------------------------------
+Coverage (%)                     | 100.0        | 100.0        | 100.0        | 100.0       
+PDR (%)                          | 100.0        | 100.0        | 100.0        | 100.0       
+Avg Latency (ms)                 | 100.0        | 324.2        | 127.8        | 166.3       
+Packets Sent                     | 599.0        | 425.0        | 467.0        | 919.0       
+Packets Delivered                | 599.0        | 425.0        | 467.0        | 919.0       
+Packets Dropped                  | 0.0          | 0.0          | 0.0          | 0.0         
+Avg Hops                         | 1.0          | 1.2          | 1.1          | 1.1         
+PoIs Surveyed                    | 10.0         | 8.0          | 8.0          | 16.0        
+Total Energy (kWh)               | 0.1          | 0.1          | 0.1          | 0.1         
+Survey Rate (PoI/min)            | 2.6          | 1.9          | 2.1          | 3.2         
+Survival Rate (%)                | 100.0        | 100.0        | 100.0        | 100.0       
+================================================================================
+>> Generated comparative charts in docs/figures/scenario_comparison.png
+

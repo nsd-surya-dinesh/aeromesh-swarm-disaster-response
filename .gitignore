@@ -23,3 +23,5 @@ venv/
 .pytest_cache/
 .cache/
 .claude/
+
+.env

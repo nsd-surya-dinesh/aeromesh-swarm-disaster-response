@@ -1,0 +1,15 @@
+AEROMESH STAGE 2 — DAY 2 GIT / PYTHON ENVIRONMENT (2026-10-11)
+Status: VERIFIED (from git commands and pytest execution)
+Repository path: C:\Users\surya\aeromesh-swarm-disaster-response
+Branch: stage-2-development
+Current HEAD: 30bb8c2 (release: v0.2.0-stage2 — Stage 2 resilience, adapter interface, command gateway, audit docs)
+Last commit (full): 30bb8c29e5d33ad89299a4450434f911a42e52f9 — Sun Oct 11 11:29:14 2026 +0530
+Working-tree status: Modified files present (simulation/simulator.py, tests/test_route_recovery.py, comm/channel.py, core/autopilot_interface/*.py, docs/PRODUCTION_READINESS.md, etc.); untracked new files (tests/test_phase6/7, docs/KNOWN_LIMITATIONS.md, etc.) — all user work preserved; no reset
+Git version: available (git rev-parse / git log executed successfully)
+Python interpreter: 3.12.7 (confirmed by pytest header: "Python 3.12.7, pytest-9.1.1")
+Python launcher: available (pytest executes via python -m pytest)
+Virtual environment: venv/ exists (Lib/site-packages/ present); not activated for verification
+Dependency files inspected: core/config.py, core/models.py, comm/*.py exist; requirements.txt / pyproject.toml not inspected (not required for verification)
+Pytest: installed and working (tests executed successfully)
+No installations performed. No dependencies upgraded. No versions changed.
+Collection method: git commands executed; pytest header captured; dependency files listed from directory

@@ -1,0 +1,12 @@
+[Unit]
+Description=AeroMesh Swarm Disaster Response
+After=network.target
+
+[Service]
+WorkingDirectory=/opt/aeromesh-swarm-disaster-response-main
+ExecStart=/usr/bin/python3 /opt/aeromesh-swarm-disaster-response-main/run_simulation.py --hardware
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

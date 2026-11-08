@@ -1,0 +1,110 @@
+=== AeroMesh-Swarm Scalability Benchmark ===
+Testing UAV counts: 5, 10, 15, 20, 25
+============================================================
+
+>> Testing with 5 UAVs and 10 PoIs...
+>> Starting mission simulation...
+   UAVs: 5, PoIs: 10
+   t=0s | Coverage: 0.0%
+   t=30s | Coverage: 0.0%
+   t=60s | Coverage: 0.0%
+   t=90s | Coverage: 10.0%
+   t=120s | Coverage: 20.0%
+   t=150s | Coverage: 40.0%
+   t=180s | Coverage: 50.0%
+   t=210s | Coverage: 70.0%
+   t=240s | Coverage: 90.0%
+[+] Mission completed at t=257.4s
+   Runtime: 0.72s
+   Coverage: 100.0%
+   PDR: 100.0%
+   Latency: 131.6 ms
+   Avg Hops: 1.2
+
+>> Testing with 10 UAVs and 10 PoIs...
+>> Starting mission simulation...
+   UAVs: 10, PoIs: 10
+   t=0s | Coverage: 0.0%
+   t=30s | Coverage: 0.0%
+   t=60s | Coverage: 0.0%
+   t=90s | Coverage: 10.0%
+   t=120s | Coverage: 20.0%
+   t=150s | Coverage: 40.0%
+   t=180s | Coverage: 60.0%
+   t=210s | Coverage: 70.0%
+   t=240s | Coverage: 80.0%
+   t=270s | Coverage: 90.0%
+[+] Mission completed at t=275.4s
+   Runtime: 1.08s
+   Coverage: 100.0%
+   PDR: 100.0%
+   Latency: 145.7 ms
+   Avg Hops: 1.2
+
+>> Testing with 15 UAVs and 10 PoIs...
+>> Starting mission simulation...
+   UAVs: 15, PoIs: 10
+   t=0s | Coverage: 0.0%
+   t=30s | Coverage: 0.0%
+   t=60s | Coverage: 0.0%
+   t=90s | Coverage: 0.0%
+   t=120s | Coverage: 30.0%
+   t=150s | Coverage: 50.0%
+   t=180s | Coverage: 80.0%
+   t=210s | Coverage: 80.0%
+[+] Mission completed at t=234.2s
+   Runtime: 3.31s
+   Coverage: 100.0%
+   PDR: 100.0%
+   Latency: 131.3 ms
+   Avg Hops: 1.2
+
+>> Testing with 20 UAVs and 10 PoIs...
+>> Starting mission simulation...
+   UAVs: 20, PoIs: 10
+   t=0s | Coverage: 0.0%
+   t=30s | Coverage: 0.0%
+   t=60s | Coverage: 0.0%
+   t=90s | Coverage: 10.0%
+   t=120s | Coverage: 30.0%
+   t=150s | Coverage: 50.0%
+   t=180s | Coverage: 70.0%
+   t=210s | Coverage: 90.0%
+[+] Mission completed at t=221.9s
+   Runtime: 5.70s
+   Coverage: 100.0%
+   PDR: 100.0%
+   Latency: 128.4 ms
+   Avg Hops: 1.2
+
+>> Testing with 25 UAVs and 10 PoIs...
+>> Starting mission simulation...
+   UAVs: 25, PoIs: 10
+   t=0s | Coverage: 0.0%
+   t=30s | Coverage: 0.0%
+   t=60s | Coverage: 0.0%
+   t=90s | Coverage: 0.0%
+   t=120s | Coverage: 20.0%
+   t=150s | Coverage: 40.0%
+   t=180s | Coverage: 80.0%
+   t=210s | Coverage: 90.0%
+[+] Mission completed at t=211.7s
+   Runtime: 7.80s
+   Coverage: 100.0%
+   PDR: 100.0%
+   Latency: 136.5 ms
+   Avg Hops: 1.2
+
+================================================================================
+SCALABILITY BENCHMARK RESULTS
+================================================================================
+UAVs   | Runtime(s) | Coverage(%)  | PDR(%)   | Latency(ms)  | Avg Hops | CBBA Iters
+--------------------------------------------------------------------------------
+5      | 0.72       | 100.0        | 100.0    | 131.6        | 1.2      | 1         
+10     | 1.08       | 100.0        | 100.0    | 145.7        | 1.2      | 1         
+15     | 3.31       | 100.0        | 100.0    | 131.3        | 1.2      | 1         
+20     | 5.70       | 100.0        | 100.0    | 128.4        | 1.2      | 1         
+25     | 7.80       | 100.0        | 100.0    | 136.5        | 1.2      | 1         
+================================================================================
+
+>> Results saved to scalability_benchmark_results.txt

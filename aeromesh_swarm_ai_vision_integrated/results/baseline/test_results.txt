@@ -1,0 +1,32 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.7, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\surya\AppData\Local\Programs\Python\Python312\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\surya\aeromesh-swarm-disaster-response
+plugins: anyio-4.15.1
+collecting ... collected 23 items
+
+tests/test_comm.py::TestRFChannel::test_los_probability_high_altitude PASSED [  4%]
+tests/test_comm.py::TestRFChannel::test_path_loss_increases_with_distance PASSED [  8%]
+tests/test_comm.py::TestRFChannel::test_link_quality_close_distance PASSED [ 13%]
+tests/test_comm.py::TestMeshRouter::test_routing_table_construction PASSED [ 17%]
+tests/test_comm.py::TestMeshRouter::test_packet_delivery PASSED          [ 21%]
+tests/test_comm.py::TestSteinerRelayManager::test_relay_position_midpoint PASSED [ 26%]
+tests/test_comm.py::TestSteinerRelayManager::test_multi_hop_relay_chain PASSED [ 30%]
+tests/test_simulation.py::TestScenarios::test_scenario_1_baseline_completion PASSED [ 34%]
+tests/test_simulation.py::TestScenarios::test_scenario_2_deep_canyon_connectivity PASSED [ 39%]
+tests/test_simulation.py::TestScenarios::test_scenario_4_battery_cycling PASSED [ 43%]
+tests/test_simulation.py::TestScenarios::test_scenario_3_self_healing_chain PASSED [ 47%]
+tests/test_simulation.py::TestScenarios::test_metrics_calculation PASSED [ 52%]
+tests/test_simulation.py::TestEventInjection::test_dynamic_poi_injection PASSED [ 56%]
+tests/test_simulation.py::TestEventInjection::test_relay_failure_recovery PASSED [ 60%]
+tests/test_swarm.py::TestCBBATaskAllocator::test_marginal_score_calculation PASSED [ 65%]
+tests/test_swarm.py::TestCBBATaskAllocator::test_cbba_allocation_assigns_tasks PASSED [ 69%]
+tests/test_swarm.py::TestPathPlanner::test_collision_avoidance_repulsion PASSED [ 73%]
+tests/test_swarm.py::TestPathPlanner::test_dubins_path_generation PASSED [ 78%]
+tests/test_swarm.py::TestHealthMonitor::test_low_battery_triggers_rtb PASSED [ 82%]
+tests/test_swarm.py::TestHealthMonitor::test_charging_restoration PASSED [ 86%]
+tests/test_swarm.py::TestHealthMonitor::test_heartbeat_timeout_detection PASSED [ 91%]
+tests/test_swarm.py::TestHealthMonitor::test_relay_replacement_only_for_relays PASSED [ 95%]
+tests/test_swarm.py::TestHealthMonitor::test_relay_failure_triggers_replacement PASSED [100%]
+
+============================= 23 passed in 4.72s ==============================

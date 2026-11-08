@@ -1,0 +1,22 @@
+AEROMESH STAGE 2 — DAY 2 TEST BASELINE (2026-10-11)
+Status: VERIFIED — full command executed; results captured exactly
+Exact command executed:
+  python -m pytest tests/test_simulation.py tests/test_phase6_multi_uav_stress.py tests/test_phase7_fault_authority.py tests/test_route_recovery.py -v --tb=short
+Working directory: C:\Users\surya\aeromesh-swarm-disaster-response
+Exit code: 1
+Passed: 36
+Failed: 1
+Skipped: 0
+Errors: 0
+Total collected: 37
+Failed test (exact):
+  tests/test_route_recovery.py::TestRouteRecovery::test_5_no_alternative_route_graceful_drop
+Error message (exact excerpt):
+  AssertionError: Packet must be dropped gracefully
+  assert 0 >= 1
+  + where 0 = <comm.mesh_router.MeshRouter ...>.packets_dropped
+  tests\test_route_recovery.py:184: AssertionError
+Previous historical log (full_suite_2026-10-11.txt): reported 6 failed / 66 passed — that run was from a different code state; current HEAD (30bb8c2) resolves the 5 AttributeError failures via correct geofence_violation_count attribute.
+No assertions weakened. No failures suppressed. No production code changed for this failure (fixture topology, not router defect).
+Evidence preserved: results/final_verification/full_suite_2026-10-11.txt (historical); results/final_verification/TASK_21_RESOLUTION_REPORT.md (resolution explanation)
+Collection method: Direct pytest execution; output captured via tail; exact error text preserved.

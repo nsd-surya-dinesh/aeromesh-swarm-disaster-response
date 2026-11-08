@@ -1,0 +1,25 @@
+AEROMESH STAGE 2 — DAY 1-2-7 ENVIRONMENT NOTES (2026-10-11)
+Status: PARTIALLY VERIFIED — Windows verified (system context); WSL NOT STARTED (not required for simulation); Git/Python/tests VERIFIED.
+Verified:
+- Windows 11 Home Single Language, 10.0.26300, i5-1235U, 16GB RAM, ~477GB storage
+- Git branch stage-2-development at 30bb8c2
+- Python 3.12.7 + pytest working
+- Test suite: 36 pass / 1 fail (test_5 preserved)
+- Scenarios 1-4 pass (seed 42); 1 representative run completed (t=263.9s, coverage 100%)
+- Adapter package (5 modules) intact; command validation 10 gates verified
+- Safety: default never-arms; mock adapter non-physical; no physical commands
+Partially verified / BLOCKED:
+- WSL2 / Ubuntu 22.04: NOT STARTED (no installation requested; simulation works natively)
+- SITL (ArduPilot/MAVLink): NOT RUN — blocker documented (docs/SITL_SETUP.md exists)
+- Thermal module: BLOCKED (model unknown)
+- UWB module: BLOCKED (protocol/model unknown)
+- 5-run full repeatability: NOT FULLY EXECUTED (1 representative run; requires extended runtime)
+Not started (not needed for Stage 2 demonstration):
+- PX4 SITL installation
+- ROS 2 Humble installation
+- Gazebo installation
+- Physical UAV flight
+Steps completed: Inspect, test reproduction, evidence documentation, hardware matrix, demo plan.
+Steps remaining (with approval): WSL2/Ubuntu if needed for SITL; SITL setup once MAVLink installed; thermal/UWB datasheets; full 5-run repeatability.
+Collection date/time: 2026-10-11
+Record keeper: Independent validation engineer

@@ -1,0 +1,25 @@
+build/
+install/
+log/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+.git-credentials
+*.tar.gz
+*.zip
+# ROS 2 build artifacts + vision build artifacts
+build/
+install/
+*.tar.gz
+*.zip
+.venv/
+venv/
+.pytest_cache/
+.cache/
+.claude/

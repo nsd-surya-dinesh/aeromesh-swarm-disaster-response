@@ -1,0 +1,43 @@
+### ROS 2 Nodes
+/cbba_allocator_node
+/health_monitor_node
+/mesh_router_node
+/simulation_bridge_node
+
+### Topics
+/aeromesh/fault_events
+/aeromesh/network/link_quality
+/aeromesh/network/topology
+/aeromesh/relay_handoffs
+/aeromesh/uav_0/battery_state
+/aeromesh/uav_0/payload_mb
+/aeromesh/uav_0/pose
+/aeromesh/uav_0/status
+/aeromesh/uav_1/battery_state
+/aeromesh/uav_1/payload_mb
+/aeromesh/uav_1/pose
+/aeromesh/uav_1/status
+/aeromesh/uav_2/battery_state
+/aeromesh/uav_2/payload_mb
+/aeromesh/uav_2/pose
+/aeromesh/uav_2/status
+/aeromesh/uav_3/battery_state
+/aeromesh/uav_3/payload_mb
+/aeromesh/uav_3/pose
+/aeromesh/uav_3/status
+/aeromesh/uav_4/battery_state
+/aeromesh/uav_4/payload_mb
+/aeromesh/uav_4/pose
+/aeromesh/uav_4/status
+
+### Services
+/aeromesh/service/allocate_tasks
+/aeromesh/service/cbba_run
+/aeromesh/service/get_mission_metrics
+/aeromesh/service/inject_emergency_poi
+
+### Package Executables
+aeromesh_swarm cbba_allocator_node
+aeromesh_swarm health_monitor_node
+aeromesh_swarm mesh_router_node
+aeromesh_swarm simulation_bridge_node
